@@ -6,10 +6,10 @@
 
 ## 📖 Overview
 
-A personal health-data inspector for Apple Health and Health Connect, with an
-optional Developer Tools mode that demonstrates the
-[`health_connector`](../../packages/health_connector) plugin across Android and
-iOS.
+A personal health-data inspector for Apple Health and Health Connect. Its main
+screen provides privacy information and SDK operations for permissions,
+records, writes, aggregation, and incremental sync through the
+[`health_connector`](../../packages/health_connector) plugin.
 
 ---
 
@@ -69,12 +69,13 @@ lib/
 │   │   ├── utils/                         # Utility functions
 │   │   └── widgets/                       # Reusable widgets
 │   └── features/                          # Feature modules
-│       ├── initialization/                # App initialization
 │       ├── home/                          # Home page
+│       ├── privacy/                       # Platform privacy information
 │       ├── permissions/                   # Permission management
 │       ├── read_health_records/           # Read operations
 │       ├── write_health_record/           # Write operations
-│       └── aggregate_health_data/         # Aggregation operations
+│       ├── aggregate_health_data/         # Aggregation operations
+│       └── incremental_data_sync/         # Incremental sync operations
 ```
 
 ---

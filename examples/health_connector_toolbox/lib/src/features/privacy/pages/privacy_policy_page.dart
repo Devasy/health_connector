@@ -1,29 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:health_connector/health_connector.dart' show HealthPlatform;
 import 'package:health_connector_toolbox/src/common/constants/app_texts.dart';
 
 /// Explains how the Toolbox accesses and stores health data.
 @immutable
 final class PrivacyPolicyPage extends StatelessWidget {
-  const PrivacyPolicyPage({super.key});
+  const PrivacyPolicyPage({required this.healthPlatform, super.key});
+
+  final HealthPlatform healthPlatform;
 
   @override
   Widget build(BuildContext context) {
+    final healthStoreName = switch (healthPlatform) {
+      HealthPlatform.appleHealth => 'Apple Health',
+      HealthPlatform.healthConnect => 'Health Connect',
+    };
+    final controlsBody = switch (healthPlatform) {
+      HealthPlatform.appleHealth =>
+        'You can grant only the permissions needed for a feature. You can '
+            'revoke access at any time in Apple Health or iOS Settings.',
+      HealthPlatform.healthConnect =>
+        'You can grant only the permissions needed for a feature. You can '
+            'revoke access at any time in Health Connect or Android system '
+            'settings. The Toolbox also exposes the SDK permission-revocation '
+            'operation.',
+    };
+
     return Scaffold(
       appBar: AppBar(title: const Text(AppTexts.privacyAndData)),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(20),
-          children: const [
+          children: [
             _PrivacySection(
               title: 'Your data stays on your device',
               body:
                   'This personal health-data inspector does not create an '
                   'account, show ads, run '
                   'analytics, or send health data to Pham Tung Lam or any '
-                  'third party. Health records are read directly from Apple '
-                  'Health or Health Connect only after you grant access.',
+                  'third party. Health records are read directly from '
+                  '$healthStoreName only after you grant access.',
             ),
-            _PrivacySection(
+            const _PrivacySection(
               title: 'Reading and displaying health data',
               body:
                   'Records you choose to read are displayed in the app and '
@@ -33,36 +51,24 @@ final class PrivacyPolicyPage extends StatelessWidget {
             _PrivacySection(
               title: 'Writing and deleting records',
               body:
-                  'Records you create are saved to Apple Health or Health '
-                  'Connect. They remain there until you delete them in the '
-                  'Toolbox or the platform health app. The Toolbox can only '
-                  'delete records that it created.',
+                  'Records you create are saved to $healthStoreName. They '
+                  'remain there until you delete them in the Toolbox or '
+                  '$healthStoreName. The Toolbox can only delete records that '
+                  'it created.',
             ),
             _PrivacySection(
               title: 'Local app storage',
               body:
                   'Incremental synchronization tokens are stored locally so '
-                  'the optional Developer Tools mode can continue an '
-                  'incremental sync inspection. Uninstalling the '
-                  'Toolbox removes this local app data but does not delete '
-                  'records already saved in the platform health store.',
-            ),
-            _PrivacySection(
-              title: 'Optional developer tools',
-              body:
-                  'Developer Tools shows technical details for the same '
-                  'on-device health data flows. It does not unlock additional '
-                  'data or bypass the permissions you choose.',
+                  'SDK Operations can continue an incremental sync inspection. '
+                  'Uninstalling the Toolbox removes this local app data but '
+                  'does not delete records already saved in $healthStoreName.',
             ),
             _PrivacySection(
               title: 'Your controls',
-              body:
-                  'You can grant only the permissions needed for a feature. '
-                  'You can revoke access at any time in Apple Health, Health '
-                  'Connect, or system settings. The Android app also exposes '
-                  'the SDK permission-revocation operation.',
+              body: controlsBody,
             ),
-            _PrivacySection(
+            const _PrivacySection(
               title: 'Support',
               body:
                   'For private support or privacy questions, email '
@@ -71,7 +77,7 @@ final class PrivacyPolicyPage extends StatelessWidget {
                   'Connector SDK issue tracker only for non-sensitive bug '
                   'reports.',
             ),
-            Text(
+            const Text(
               'Effective August 19, 2026',
               textAlign: TextAlign.center,
             ),
