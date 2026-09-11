@@ -11,7 +11,6 @@ part of '../health_data_type.dart';
 /// - **iOS HealthKit**: Not supported (Use [CyclingPowerDataType])
 ///
 @sinceV2_0_0
-@supportedOnHealthConnect
 @immutable
 final class PowerSeriesDataType extends HealthDataType<PowerSeriesRecord, Power>
     implements
@@ -34,8 +33,8 @@ final class PowerSeriesDataType extends HealthDataType<PowerSeriesRecord, Power>
   String get id => 'power_series';
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.healthConnect,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    HealthConnectRequirement.none,
   ];
 
   @override

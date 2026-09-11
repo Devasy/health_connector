@@ -22,7 +22,6 @@ part of '../health_data_type.dart';
 /// use activity-specific distance types.
 ///
 @sinceV1_0_0
-@supportedOnHealthConnect
 @immutable
 final class DistanceDataType extends HealthDataType<DistanceRecord, Length>
     implements
@@ -42,8 +41,8 @@ final class DistanceDataType extends HealthDataType<DistanceRecord, Length>
   String get id => 'distance';
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.healthConnect,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    HealthConnectRequirement.none,
   ];
 
   @override

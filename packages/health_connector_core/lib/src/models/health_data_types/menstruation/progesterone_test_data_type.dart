@@ -45,7 +45,6 @@ part of '../health_data_type.dart';
 /// - [ProgesteroneTestResult]
 ///
 @sinceV3_1_0
-@supportedOnAppleHealth
 @immutable
 final class ProgesteroneTestDataType
     extends HealthDataType<ProgesteroneTestRecord, MeasurementUnit>
@@ -63,8 +62,8 @@ final class ProgesteroneTestDataType
   const ProgesteroneTestDataType();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

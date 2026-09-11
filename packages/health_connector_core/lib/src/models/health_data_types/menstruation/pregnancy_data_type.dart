@@ -43,7 +43,6 @@ part of '../health_data_type.dart';
 /// - [PregnancyRecord]
 ///
 @sinceV3_1_0
-@supportedOnAppleHealth
 @immutable
 final class PregnancyDataType
     extends HealthDataType<PregnancyRecord, MeasurementUnit>
@@ -71,8 +70,8 @@ final class PregnancyDataType
   List<AggregationMetric> get supportedAggregationMetrics => const [];
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => const [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

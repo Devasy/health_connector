@@ -8,6 +8,8 @@ import '../utils/fake_data.dart';
 class MockHealthConnectorClient extends Mock
     implements HealthConnectorPlatformClient {}
 
+class MockHealthConnector extends Mock implements HealthConnector {}
+
 void main() {
   late MockHealthConnectorClient mockClient;
 
@@ -98,12 +100,77 @@ void main() {
   setUp(
     () {
       mockClient = MockHealthConnectorClient();
+      when(() => mockClient.operatingSystemInfo).thenReturn(
+        const AndroidOperatingSystemInfo(
+          apiLevel: 34,
+          sdkExtensionVersions: [],
+        ),
+      );
     },
   );
 
   group(
     'HealthConnectorImpl',
     () {
+      test(
+        'GIVEN initialized platform facts → '
+        'WHEN operatingSystemInfo is read → '
+        'THEN returns the client snapshot',
+        () {
+          const expected = AndroidOperatingSystemInfo(
+            apiLevel: 34,
+            sdkExtensionVersions: [],
+          );
+          final HealthConnector connector = HealthConnectorImpl(
+            config: const HealthConnectorConfig(),
+            healthPlatform: HealthPlatform.healthConnect,
+            healthPlatformClient: mockClient,
+          );
+
+          expect(connector.operatingSystemInfo, expected);
+        },
+      );
+
+      test(
+        'GIVEN a non-factory connector → '
+        'WHEN operatingSystemInfo is read → '
+        'THEN throws UnsupportedOperationException',
+        () {
+          final HealthConnector connector = MockHealthConnector();
+
+          expect(
+            () => connector.operatingSystemInfo,
+            throwsA(isA<UnsupportedOperationException>()),
+          );
+        },
+      );
+
+      test(
+        'GIVEN Extension 21 is absent → '
+        'WHEN extended field support is checked → '
+        'THEN returns the extension requirement failure',
+        () {
+          final HealthConnector connector = HealthConnectorImpl(
+            config: const HealthConnectorConfig(),
+            healthPlatform: HealthPlatform.healthConnect,
+            healthPlatformClient: mockClient,
+          );
+
+          final status = connector.getSupportStatusFor(
+            ExerciseSessionSegmentEvent.extendedFieldsRequirements,
+          );
+
+          expect(
+            status,
+            isA<HealthPlatformNotSupported>().having(
+              (value) => value.reason,
+              'reason',
+              HealthPlatformNotSupportedReason.sdkExtensionVersion,
+            ),
+          );
+        },
+      );
+
       group(
         'requestPermissions',
         () {
@@ -592,6 +659,45 @@ void main() {
       group(
         'writeRecord',
         () {
+          test(
+            'GIVEN a weighted segment without Extension 21 → '
+            'WHEN writeRecord is called → '
+            'THEN rejects it before the platform call',
+            () async {
+              final connector = HealthConnectorImpl(
+                config: const HealthConnectorConfig(),
+                healthPlatform: HealthPlatform.healthConnect,
+                healthPlatformClient: mockClient,
+              );
+              final record = ExerciseSessionRecord(
+                startTime: FakeData.fakeStartTime,
+                endTime: FakeData.fakeEndTime,
+                metadata: Metadata.manualEntry(),
+                exerciseType: ExerciseType.other,
+                events: [
+                  ExerciseSessionSegmentEvent(
+                    startTime: FakeData.fakeStartTime,
+                    endTime: FakeData.fakeEndTime,
+                    segmentType: ExerciseSegmentType.unknown,
+                    weight: const Mass.kilograms(20),
+                  ),
+                ],
+              );
+
+              await expectLater(
+                connector.writeRecord(record),
+                throwsA(
+                  isA<UnsupportedOperationException>().having(
+                    (value) => value.message,
+                    'message',
+                    contains('SDK Extension 21'),
+                  ),
+                ),
+              );
+              verifyNever(() => mockClient.writeRecord(record));
+            },
+          );
+
           test(
             'GIVEN valid record with HealthRecordId.none → '
             'WHEN writeRecord is called → '
@@ -1431,37 +1537,6 @@ void main() {
                 () => connector.updateRecords(records),
                 throwsA(isA<HealthConnectorException>()),
               );
-            },
-          );
-        },
-      );
-
-      group(
-        'isExerciseSegmentWeightSupported',
-        () {
-          test(
-            'GIVEN platform client reports unsupported → '
-            'WHEN isExerciseSegmentWeightSupported is called → '
-            'THEN returns the platform client result',
-            () async {
-              // GIVEN
-              final connector = HealthConnectorImpl(
-                config: const HealthConnectorConfig(),
-                healthPlatform: HealthPlatform.healthConnect,
-                healthPlatformClient: mockClient,
-              );
-              when(
-                () => mockClient.isExerciseSegmentWeightSupported(),
-              ).thenAnswer((_) async => false);
-
-              // WHEN
-              final result = await connector.isExerciseSegmentWeightSupported();
-
-              // THEN
-              expect(result, isFalse);
-              verify(
-                () => mockClient.isExerciseSegmentWeightSupported(),
-              ).called(1);
             },
           );
         },

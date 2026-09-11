@@ -26,7 +26,6 @@ part of '../health_data_type.dart';
 /// - [BasalEnergyBurnedDataType]
 ///
 @sinceV2_2_0
-@supportedOnHealthConnect
 @immutable
 final class TotalEnergyBurnedDataType
     extends HealthDataType<TotalEnergyBurnedRecord, Energy>
@@ -56,8 +55,8 @@ final class TotalEnergyBurnedDataType
   int get hashCode => runtimeType.hashCode;
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.healthConnect,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    HealthConnectRequirement.none,
   ];
 
   @override

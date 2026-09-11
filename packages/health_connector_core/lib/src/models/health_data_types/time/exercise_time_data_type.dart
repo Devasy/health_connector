@@ -47,7 +47,6 @@ part of '../health_data_type.dart';
 /// ```
 ///
 @sinceV3_2_0
-@supportedOnAppleHealth
 @readOnly
 @immutable
 final class ExerciseTimeDataType
@@ -64,8 +63,8 @@ final class ExerciseTimeDataType
   const ExerciseTimeDataType();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

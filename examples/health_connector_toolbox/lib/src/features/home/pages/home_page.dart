@@ -2,16 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:health_connector/health_connector_internal.dart';
-import 'package:health_connector_toolbox/src/common/constants/app_icons.dart';
-import 'package:health_connector_toolbox/src/common/constants/app_texts.dart';
-import 'package:health_connector_toolbox/src/common/utils/show_app_snack_bar.dart';
 import 'package:health_connector_toolbox/src/common/widgets/error_view.dart';
 import 'package:health_connector_toolbox/src/features/aggregate_health_data/aggregate_health_data_change_notifier.dart';
 import 'package:health_connector_toolbox/src/features/aggregate_health_data/pages/aggregate_health_data_page.dart';
-import 'package:health_connector_toolbox/src/features/developer_tools/pages/developer_tools_page.dart';
 import 'package:health_connector_toolbox/src/features/home/home_change_notifier.dart';
-import 'package:health_connector_toolbox/src/features/home/widgets/feature_navigation_card.dart';
 import 'package:health_connector_toolbox/src/features/home/widgets/platform_status_card.dart';
+import 'package:health_connector_toolbox/src/features/home/widgets/toolbox_operations_section.dart';
 import 'package:health_connector_toolbox/src/features/home/widgets/welcome_header.dart';
 import 'package:health_connector_toolbox/src/features/incremental_data_sync/incremental_data_sync_change_notifier.dart';
 import 'package:health_connector_toolbox/src/features/incremental_data_sync/pages/incremental_data_sync_page.dart';
@@ -31,8 +27,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Displays a modern, card-based interface with:
 /// - Welcome header with app branding
 /// - Platform connection status
-/// - Health metrics summary with demo data
-/// - Feature navigation cards for permissions, read, write, and aggregation
+/// - Privacy and data information
+/// - SDK operation navigation cards
 ///
 /// The design follows Material Design 3 principles with a calming color
 /// palette suitable for health applications.
@@ -120,96 +116,16 @@ final class _HomeContent extends StatelessWidget {
           PlatformStatusCard(
             healthPlatform: healthConnector.healthPlatform,
           ),
-          const SizedBox(height: 32),
-
-          // Feature navigation section
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Text(
-              AppTexts.exploreFeatures,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+          const SizedBox(height: 12),
+          ToolboxOperationsSection(
+            onOpenPrivacy: () => _navigateToPrivacyPolicy(context),
+            onOpenPermissions: () => _navigateToPermissions(context),
+            onOpenRecords: () => _navigateToReadRecords(context),
+            onOpenWrite: () => _navigateToWriteRecords(context),
+            onOpenAggregation: () => _navigateToAggregate(context),
+            onOpenSync: () => unawaited(
+              _navigateToIncrementalDataSync(context),
             ),
-          ),
-          const SizedBox(height: 16),
-
-          // Launch Health App in App Store card
-          if (healthConnector.healthPlatform != HealthPlatform.appleHealth) ...[
-            FeatureNavigationCard(
-              icon: AppIcons.store,
-              title: AppTexts.openHealthAppStore,
-              description: AppTexts.openHealthAppStoreDescription,
-              color: Colors.green,
-              onTap: () => _launchHealthAppPageInAppStore(context),
-            ),
-            const SizedBox(height: 12),
-          ],
-
-          // Health data access card
-          FeatureNavigationCard(
-            icon: AppIcons.lockOutline,
-            title: AppTexts.chooseDataAccess,
-            description: AppTexts.permissionsDescription,
-            color: Colors.deepOrange,
-            onTap: () => _navigateToPermissions(context),
-          ),
-          const SizedBox(height: 12),
-
-          // Browse health data card
-          FeatureNavigationCard(
-            icon: AppIcons.readMore,
-            title: AppTexts.browseHealthData,
-            description: AppTexts.readRecordsDescription,
-            color: Colors.teal,
-            onTap: () => _navigateToReadRecords(context),
-          ),
-          const SizedBox(height: 12),
-
-          // Add health entry card
-          FeatureNavigationCard(
-            icon: AppIcons.add,
-            title: AppTexts.addHealthEntry,
-            description: AppTexts.writeRecordsDescription,
-            color: Colors.blue,
-            onTap: () => _navigateToWriteRecords(context),
-          ),
-          const SizedBox(height: 12),
-
-          // Health summary card
-          FeatureNavigationCard(
-            icon: AppIcons.calculate,
-            title: AppTexts.healthSummary,
-            description: AppTexts.aggregateDescription,
-            color: Colors.purple,
-            onTap: () => _navigateToAggregate(context),
-          ),
-          const SizedBox(height: 12),
-
-          FeatureNavigationCard(
-            icon: AppIcons.privacyTip,
-            title: AppTexts.privacyAndData,
-            description: AppTexts.privacyAndDataDescription,
-            color: Colors.blueGrey,
-            onTap: () => _navigateToPrivacyPolicy(context),
-          ),
-          const SizedBox(height: 28),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Text(
-              AppTexts.developerTools,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          FeatureNavigationCard(
-            icon: AppIcons.developerMode,
-            title: AppTexts.developerTools,
-            description: AppTexts.developerToolsDescription,
-            color: Colors.indigo,
-            onTap: () => _navigateToDeveloperTools(context),
           ),
 
           // Bottom padding for better scroll experience
@@ -321,43 +237,10 @@ final class _HomeContent extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute<Widget>(
-        builder: (_) => const PrivacyPolicyPage(),
-      ),
-    );
-  }
-
-  /// Navigates to the optional developer tools page.
-  void _navigateToDeveloperTools(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute<Widget>(
-        builder: (_) => DeveloperToolsPage(
+        builder: (_) => PrivacyPolicyPage(
           healthPlatform: healthConnector.healthPlatform,
-          onOpenPermissions: () => _navigateToPermissions(context),
-          onOpenRecords: () => _navigateToReadRecords(context),
-          onOpenWrite: () => _navigateToWriteRecords(context),
-          onOpenAggregation: () => _navigateToAggregate(context),
-          onOpenSync: () => unawaited(
-            _navigateToIncrementalDataSync(context),
-          ),
         ),
       ),
     );
-  }
-
-  Future<void> _launchHealthAppPageInAppStore(BuildContext context) async {
-    try {
-      final notifier = Provider.of<HomeChangeNotifier>(context, listen: false);
-
-      return notifier.launchHealthAppPageInAppStore();
-    } on HealthConnectorException catch (e) {
-      if (context.mounted) {
-        showAppSnackBar(
-          context,
-          SnackBarType.error,
-          '${AppTexts.failedToLaunchHealthAppStore}: ${e.message}',
-        );
-      }
-    }
   }
 }

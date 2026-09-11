@@ -4,9 +4,21 @@ part of '../health_record.dart';
 ///
 @sinceV3_7_0
 @immutable
-sealed class ExerciseSessionEvent implements HealthPlatformData {
+sealed class ExerciseSessionEvent {
   /// Creates an exercise session event.
   const ExerciseSessionEvent();
+
+  /// Requirements for each platform that supports this event kind.
+  @sinceV3_11_0
+  List<HealthPlatformRequirement> get healthPlatformRequirements;
+
+  /// The health platforms that support this event kind.
+  @Deprecated(
+    'Use healthPlatformRequirements.supportedHealthPlatforms instead. '
+    'Will be removed in 4.0.0.',
+  )
+  List<HealthPlatform> get supportedHealthPlatforms =>
+      healthPlatformRequirements.supportedHealthPlatforms;
 }
 
 /// Base class for exercise session events that have a start and end time.
@@ -71,7 +83,6 @@ sealed class ExerciseSessionInstantEvent extends ExerciseSessionEvent {
 /// - **Android Health Connect**: Not supported.
 ///
 @sinceV3_7_0
-@supportedOnAppleHealth
 @immutable
 final class ExerciseSessionStateTransitionEvent
     extends ExerciseSessionInstantEvent {
@@ -96,8 +107,8 @@ final class ExerciseSessionStateTransitionEvent
   int get hashCode => Object.hash(super.hashCode, type);
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 }
 
@@ -111,15 +122,14 @@ final class ExerciseSessionStateTransitionEvent
 /// - **Android Health Connect**: Not supported
 ///
 @sinceV3_7_0
-@supportedOnAppleHealth
 @immutable
 final class ExerciseSessionMarkerEvent extends ExerciseSessionInstantEvent {
   /// Creates an exercise marker event.
   const ExerciseSessionMarkerEvent({required super.time});
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 }
 
@@ -156,10 +166,8 @@ final class ExerciseSessionLapEvent extends ExerciseSessionIntervalEvent {
   final Length? distance;
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
-    HealthPlatform.healthConnect,
-  ];
+  List<HealthPlatformRequirement> get healthPlatformRequirements =>
+      HealthPlatformRequirement.allPlatformsWithoutRequirements;
 
   @override
   bool operator ==(Object other) =>
@@ -223,12 +231,13 @@ final class ExerciseSessionSegmentEvent extends ExerciseSessionIntervalEvent {
   /// Only persisted and returned when the device's Health Connect Mainline
   /// module is **SDK Extension 21 or higher**. Writing a non-null value on a
   /// device below this threshold throws an [UnsupportedOperationException].
+  /// Check [extendedFieldsRequirements] before allowing callers to set this
+  /// field.
   ///
   /// **HealthKit (iOS):** Always `null` — HealthKit's
   /// [HKWorkoutEvent](https://developer.apple.com/documentation/healthkit/hkworkoutevent)
   /// does not support a weight field.
   @sinceV3_9_0
-  @supportedOnHealthConnectSdkExtension21
   final Mass? weight;
 
   /// Zero-based index of the set this segment belongs to.
@@ -248,7 +257,6 @@ final class ExerciseSessionSegmentEvent extends ExerciseSessionIntervalEvent {
   /// HealthKit could carry this in `HKWorkoutEvent.metadata` the way segment
   /// type and repetitions already are; that is a planned follow-up.
   @sinceV3_10_0
-  @supportedOnHealthConnectSdkExtension21
   final int? setIndex;
 
   /// Borg CR10 rate of perceived exertion for this segment.
@@ -263,14 +271,22 @@ final class ExerciseSessionSegmentEvent extends ExerciseSessionIntervalEvent {
   /// HealthKit could carry this in `HKWorkoutEvent.metadata` the way segment
   /// type and repetitions already are; that is a planned follow-up.
   @sinceV3_10_0
-  @supportedOnHealthConnectSdkExtension21
   final double? rateOfPerceivedExertion;
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
-    HealthPlatform.healthConnect,
+  List<HealthPlatformRequirement> get healthPlatformRequirements =>
+      HealthPlatformRequirement.allPlatformsWithoutRequirements;
+
+  /// Requirements for fields unavailable in the base segment event contract.
+  @sinceV3_11_0
+  static const List<HealthPlatformRequirement> extendedFieldsRequirements = [
+    HealthConnectRequirement.android14OrLaterWithSDKExtension21,
   ];
+
+  /// Whether this event contains a field gated by additional requirements.
+  @sinceV3_11_0
+  bool get hasExtendedFields =>
+      weight != null || setIndex != null || rateOfPerceivedExertion != null;
 
   @override
   bool operator ==(Object other) =>

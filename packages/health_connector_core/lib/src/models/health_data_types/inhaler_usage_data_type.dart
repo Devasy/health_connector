@@ -22,7 +22,6 @@ part of 'health_data_type.dart';
 /// - [InhalerUsageRecord]
 ///
 @sinceV3_5_0
-@supportedOnAppleHealth
 @immutable
 final class InhalerUsageDataType
     extends HealthDataType<InhalerUsageRecord, Number>
@@ -41,8 +40,8 @@ final class InhalerUsageDataType
   const InhalerUsageDataType();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

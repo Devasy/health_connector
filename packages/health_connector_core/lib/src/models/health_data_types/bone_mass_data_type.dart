@@ -21,7 +21,6 @@ part of 'health_data_type.dart';
 /// - [BoneMassRecord]
 ///
 @sinceV2_2_0
-@supportedOnHealthConnect
 @immutable
 final class BoneMassDataType extends HealthDataType<BoneMassRecord, Mass>
     implements
@@ -40,8 +39,8 @@ final class BoneMassDataType extends HealthDataType<BoneMassRecord, Mass>
   String get id => 'bone_mass';
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.healthConnect,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    HealthConnectRequirement.none,
   ];
 
   @override

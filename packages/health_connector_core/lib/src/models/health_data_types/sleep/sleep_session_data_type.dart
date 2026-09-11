@@ -23,7 +23,6 @@ part of '../health_data_type.dart';
 /// - [SleepSessionRecord]
 ///
 @sinceV1_0_0
-@supportedOnHealthConnect
 @immutable
 final class SleepSessionDataType
     extends HealthDataType<SleepSessionRecord, TimeDuration>
@@ -53,8 +52,8 @@ final class SleepSessionDataType
   int get hashCode => runtimeType.hashCode;
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.healthConnect,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    HealthConnectRequirement.none,
   ];
 
   @override

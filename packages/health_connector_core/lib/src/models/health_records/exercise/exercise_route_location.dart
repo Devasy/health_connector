@@ -13,7 +13,7 @@ part of '../health_record.dart';
 ///
 @sinceV3_8_0
 @immutable
-final class ExerciseRouteLocation implements HealthPlatformData {
+final class ExerciseRouteLocation {
   /// Minimum valid latitude in degrees.
   static const double minLatitudeDegrees = -90.0;
 
@@ -156,11 +156,15 @@ final class ExerciseRouteLocation implements HealthPlatformData {
   /// Valid range: non-negative when present.
   final Length? verticalAccuracy;
 
-  @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
-    HealthPlatform.healthConnect,
-  ];
+  /// The health platforms that support exercise route locations.
+  @Deprecated(
+    'Use the supportedHealthPlatforms projection of '
+    'HealthPlatformRequirement.allPlatformsWithoutRequirements '
+    'instead. Will be removed in 4.0.0.',
+  )
+  List<HealthPlatform> get supportedHealthPlatforms => HealthPlatformRequirement
+      .allPlatformsWithoutRequirements
+      .supportedHealthPlatforms;
 
   @override
   bool operator ==(Object other) =>

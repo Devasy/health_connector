@@ -24,7 +24,6 @@ part of '../health_data_type.dart';
 /// - [SleepStageRecord]
 ///
 @sinceV1_0_0
-@supportedOnAppleHealth
 @immutable
 final class SleepStageDataType
     extends HealthDataType<SleepStageRecord, TimeDuration>
@@ -54,8 +53,8 @@ final class SleepStageDataType
   int get hashCode => runtimeType.hashCode;
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

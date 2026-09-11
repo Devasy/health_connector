@@ -34,9 +34,12 @@ void main() {
       test(
         'supported platforms are correctly defined',
         () {
-          expect(dataType.supportedHealthPlatforms, hasLength(1));
           expect(
-            dataType.supportedHealthPlatforms,
+            dataType.healthPlatformRequirements.supportedHealthPlatforms,
+            hasLength(1),
+          );
+          expect(
+            dataType.healthPlatformRequirements.supportedHealthPlatforms,
             contains(HealthPlatform.appleHealth),
           );
         },

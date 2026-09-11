@@ -50,7 +50,7 @@ to check platform availability and capabilities.
 
 - [Logging](#logging)
 
-- [Annotations](#annotations)
+- [Annotations and runtime requirements](#annotations-and-runtime-requirements)
 
 - [References](#references)
   - [SDK Website](#sdk-website)
@@ -522,6 +522,24 @@ try {
 ```
 
 ### Manage Features
+
+### Check Runtime Capability Support
+
+Data types, exercise types, exercise events, and platform features expose
+`healthPlatformRequirements`. Resolve them against the platform and immutable
+OS snapshot captured when the connector was created:
+
+```dart
+final status = connector.getSupportStatusFor(
+  HealthDataType.steps.healthPlatformRequirements,
+);
+if (!status.isSupported) return;
+
+print(connector.operatingSystemInfo);
+```
+
+For `HealthPlatformFeature`, also call `getFeatureStatus()` because native
+feature availability can change independently of its platform requirement.
 
 > **Platform Behavior:**
 >
@@ -1126,7 +1144,7 @@ details about what went wrong. Use this code to handle errors programmatically.
 | `rateLimitExceeded`                         | `HealthServiceException`            | Android  | API request quota exhausted.                                                                                                    | Wait and retry later. Implement exponential backoff.                          |
 | `dataSyncInProgress`                        | `HealthServiceException`            | Android  | Health Connect is currently syncing data; operations locked.                                                                    | Retry after a short delay.                                                    |
 | `invalidArgument`                           | `InvalidArgumentException`          | All      | Invalid parameter, malformed record, or expired usage of a token.                                                               | Validate input. For expired sync tokens, restart sync with `syncToken: null`. |
-| `unsupportedOperation`                      | `UnsupportedOperationException`     | All      | The requested operation is not supported on the current platform or OS version (e.g. accessing Android-only data types on iOS). | Check `@supportedOn` annotations in documentation before using the API.       |
+| `unsupportedOperation`                      | `UnsupportedOperationException`     | All      | The requested operation is not supported on the current platform or OS version (e.g. accessing Android-only data types on iOS). | Check `healthPlatformRequirements` with `getSupportStatusFor()` before using the API. |
 | `unknownError`                              | `UnknownException`                  | All      | An unclassified internal system error occurred.                                                                                 | Log the error details for debugging.                                          |
 
 ### Error Handling Example
@@ -1277,81 +1295,42 @@ final connector = await HealthConnector.create(
 );
 ```
 
-## Annotations
+## Annotations and runtime requirements
 
-The Health Connector SDK uses annotations to communicate API stability, platform support, versioning, and usage
-constraints. Understanding these annotations helps you use the API correctly.
+Annotations communicate API lifecycle and usage constraints. Platform and
+OS-version support is represented by each API's `healthPlatformRequirements`.
 
-| Annotation                                    | Description                                                                                                                     | Usage                                                                                                                                                                |
-|:----------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `@supportedOnHealthConnect`                   | Android Health Connect only.                                                                                                    | Verify platform using `HealthConnector.healthPlatform` before use.                                                                                                   |
-| `@supportedOnAppleHealth`                     | iOS HealthKit only.                                                                                                             | Verify platform using `HealthConnector.healthPlatform` before use.                                                                                                   |
-| `@supportedOnAppleHealthIOS16Plus`            | iOS HealthKit with iOS 16.0 or later.                                                                                           | Verify platform and iOS version before use. Throws `UnsupportedOperationException` on unsupported platforms or iOS < 16.0.                                            |
-| `@supportedOnAppleHealthIOS17Plus`            | iOS HealthKit with iOS 17.0 or later.                                                                                           | Verify platform and iOS version before use. Throws `UnsupportedOperationException` on unsupported platforms or iOS < 17.0.                                            |
-| `@supportedOnAppleHealthIOS18Plus`            | iOS HealthKit with iOS 18.0 or later.                                                                                           | Verify platform and iOS version before use. Throws `UnsupportedOperationException` on unsupported platforms or iOS < 18.0.                                            |
-| `@supportedOnHealthConnectSdkExtension21`     | Android Health Connect with SDK Extension 21+ (Android 14+ with the Health Connect Mainline update).                           | Writing a non-null value on unsupported devices throws `UnsupportedOperationException`. The field is always `null` on iOS. See the note below. |
-| `@readOnly`                                   | Read-only data types representing system-calculated metrics. Cannot be written, updated, or deleted.                            | Use only `readRecords()` or `aggregate()`. Writing throws `UnsupportedOperationException`.                                                                            |
-| `@internalUse`                                | Internal SDK APIs not part of the public API surface.                                                                           | **Do not use in application code.** Use documented public APIs instead.                                                                                               |
+| Annotation | Description | Usage |
+|:-----------|:------------|:------|
+| `@readOnly` | System-calculated data type that cannot be written, updated, or deleted. | Use only supported read or aggregate operations. |
+| `@internalUse` | Internal SDK API outside the public surface. | Do not use it in application code. |
+| `@experimentalApi` | API may change before stabilization. | Review release notes before upgrading. |
+| `@sinceV…` | Release that introduced the API. | Use it to confirm the minimum SDK version. |
 
-> **Note:** Annotations can be combined. When multiple annotations are present, all constraints apply.
+The internal `supportedOn…` annotation constants remain available as deprecated
+compatibility aliases until 4.0.0. New code must use
+`HealthConnectRequirement` or `AppleHealthRequirement` in
+`healthPlatformRequirements`.
 
-### Example: Interpreting `InfrequentMenstrualCycleEventRecord` Annotations
-
-```dart
-@supportedOnAppleHealthIOS16Plus
-@readOnly
-final class InfrequentMenstrualCycleEventRecord extends IntervalHealthRecord {
-  @internalUse
-  factory InfrequentMenstrualCycleEventRecord.internal({...}) {...}
-}
-```
-
-- **`@supportedOnAppleHealthIOS16Plus`** - Only works on iOS HealthKit with iOS 16.0+. Will throw
-  `UnsupportedOperationException` on Android or iOS < 16.0.
-- **`@readOnly`** - Can only be read, not written or deleted. This represents a system-calculated metric from HealthKit.
-- **`@internalUse`** (on the factory) - The `.internal()` factory is for SDK internal use only. Do not use it in
-  your application code.
-
-**Correct usage:**
+Check runtime platform and version requirements before using a conditional API:
 
 ```dart
-final connector = await HealthConnector.create();
-
-try {
-  // Recommended: Only use read operations for read-only data types
-  final now = DateTime.now();
-  final response = await connector.readRecords(
-    HealthDataType.infrequentMenstrualCycleEvent.readInTimeRange(
-      startTime: now.subtract(Duration(days: 1)),
-      endTime: now,
-    ),
-  );
-
-  // Avoid: Don't use internal APIs
-  // final record = InfrequentMenstrualCycleEventRecord.internal(...);
-
-  // Avoid: Don't try to write read-only records
-  // await healthConnector.writeRecord(record); // Throws UnsupportedOperationException
-} on UnsupportedOperationException catch (e) {
-  print('HealthDataType.infrequentMenstrualCycleEvent is supported only by iOS 16+: $e');
-}
+final support = connector.getSupportStatusFor(
+  HealthDataType.infrequentMenstrualCycleEvent.healthPlatformRequirements,
+);
+if (!support.isSupported) return;
 ```
-
-> **Coming Soon:** A new package `health_connector_lint` will be released in the future. This package will
-> leverage these annotations and integrate with the Dart analyzer through custom lint rules to guide developers in
-> using the SDK API correctly.
 
 ### Exercise Segment Weight, Set Index, and RPE (SDK Extension 21)
 
-`ExerciseSessionSegmentEvent.weight`, `.setIndex`, and `.rateOfPerceivedExertion` are all
-annotated with `@supportedOnHealthConnectSdkExtension21`. These fields map to
+`ExerciseSessionSegmentEvent.weight`, `.setIndex`, and
+`.rateOfPerceivedExertion` map to
 [`ExerciseSegment.weight`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/ExerciseSegment#weight),
 [`ExerciseSegment.setIndex`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/ExerciseSegment#setIndex),
 and
 [`ExerciseSegment.rateOfPerceivedExertion`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/ExerciseSegment#rateOfPerceivedExertion)
-in the Health Connect SDK. All three are gated behind the same check, and are only
-available on devices whose Health Connect Mainline module is at **SDK Extension 21 or
-higher**.
+in the Health Connect SDK. All three require a device whose Health Connect
+Mainline module is at **SDK Extension 21 or higher**.
 
 **Platform behavior summary:**
 
@@ -1362,11 +1341,13 @@ higher**.
 | Android < 14                                      | Throws `UnsupportedOperationException`   | `null`     |
 | iOS HealthKit                                     | Throws `UnsupportedOperationException`   | `null`     |
 
-**Recommended pattern: check the capability first, then fall back to the exception catch.**
+**Recommended pattern: check the runtime requirements first.**
 
 ```dart
-// 1. Ask before writing, so you can adapt the UI instead of racing an exception.
-final supportsExtendedFields = await connector.isExerciseSegmentWeightSupported();
+final support = connector.getSupportStatusFor(
+  ExerciseSessionSegmentEvent.extendedFieldsRequirements,
+);
+final supportsExtendedFields = support.isSupported;
 
 final segment = ExerciseSessionSegmentEvent(
   startTime: startTime,
@@ -1378,9 +1359,6 @@ final segment = ExerciseSessionSegmentEvent(
   rateOfPerceivedExertion: supportsExtendedFields ? 7.5 : null,
 );
 
-// 2. Keep the catch as a backstop: the capability check is evaluated once at
-//    client creation and cached, so treat it as a strong signal, not a guarantee
-//    against every edge case.
 try {
   await connector.writeRecord(exerciseSession);
 } on UnsupportedOperationException catch (e) {
@@ -1390,9 +1368,9 @@ try {
 }
 ```
 
-> **Important**: `isExerciseSegmentWeightSupported()` and the write-time guard are both
-> **runtime** device capability checks, not compile-time checks. The same app binary may
-> succeed on one Android 14 device and throw on another, depending on whether that device
+> **Important**: `getSupportStatusFor()` and the write-time guard use runtime
+> device capabilities, not compile-time checks. The same app binary may succeed
+> on one Android 14 device and throw on another, depending on whether that device
 > has received the relevant Mainline update.
 
 ## References

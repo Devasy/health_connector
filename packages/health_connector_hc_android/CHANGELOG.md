@@ -1,3 +1,14 @@
+## 3.7.1
+
+- **FEAT**: Return the Android API level and Health Connect SDK Extension
+  snapshot during connector initialization
+  ([#223](https://github.com/fam-tung-lam/health_connector/pull/223)).
+- **FIX**: Clarify that Health Connect biking maps to `ExerciseType.cycling`
+  (outdoor) and stationary biking maps to `ExerciseType.cyclingStationary`
+  (indoor)
+  ([#218](https://github.com/fam-tung-lam/health_connector/issues/218),
+  [e5e0796d](https://github.com/fam-tung-lam/health_connector/commit/e5e0796d4de3c4850785d7e7ec29d9748414fdd7)).
+
 ## 3.7.0
 
 - **FEAT**: Support built-in Kotlin for Flutter versions earlier than 3.44. ([32949a7a](https://github.com/fam-tung-lam/health_connector/commit/32949a7a652e9de99056d04f11ff26951e00ea54))

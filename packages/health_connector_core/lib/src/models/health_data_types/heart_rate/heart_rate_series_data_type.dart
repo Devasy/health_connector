@@ -23,7 +23,6 @@ part of '../health_data_type.dart';
 /// - [HeartRateSeriesRecord]
 ///
 @sinceV1_0_0
-@supportedOnHealthConnect
 @immutable
 final class HeartRateSeriesDataType
     extends HealthDataType<HeartRateSeriesRecord, Frequency>
@@ -62,8 +61,8 @@ final class HeartRateSeriesDataType
   ];
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.healthConnect,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    HealthConnectRequirement.none,
   ];
 
   @override

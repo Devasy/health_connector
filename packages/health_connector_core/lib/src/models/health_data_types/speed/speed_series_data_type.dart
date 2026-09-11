@@ -18,7 +18,6 @@ part of '../health_data_type.dart';
 /// - [StairDescentSpeedDataType]
 ///
 @sinceV2_0_0
-@supportedOnHealthConnect
 @immutable
 final class SpeedSeriesDataType
     extends HealthDataType<SpeedSeriesRecord, Velocity>
@@ -42,8 +41,8 @@ final class SpeedSeriesDataType
   String get id => 'speed_series';
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.healthConnect,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    HealthConnectRequirement.none,
   ];
 
   @override

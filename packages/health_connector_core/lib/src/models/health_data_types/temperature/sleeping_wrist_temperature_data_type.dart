@@ -25,7 +25,6 @@ part of '../health_data_type.dart';
 /// - [SleepingWristTemperatureRecord]
 ///
 @sinceV3_2_0
-@supportedOnAppleHealthIOS16Plus
 @readOnly
 @immutable
 final class SleepingWristTemperatureDataType
@@ -44,8 +43,8 @@ final class SleepingWristTemperatureDataType
   const SleepingWristTemperatureDataType();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.ios16OrLater,
   ];
 
   @override

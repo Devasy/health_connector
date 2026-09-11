@@ -24,7 +24,6 @@ part of 'health_data_type.dart';
 /// - [HeadphoneAudioExposureEventRecord]
 ///
 @sinceV3_6_0
-@supportedOnAppleHealth
 @immutable
 final class HeadphoneAudioExposureDataType
     extends HealthDataType<HeadphoneAudioExposureRecord, Number>
@@ -48,8 +47,8 @@ final class HeadphoneAudioExposureDataType
   String get id => 'headphone_audio_exposure';
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

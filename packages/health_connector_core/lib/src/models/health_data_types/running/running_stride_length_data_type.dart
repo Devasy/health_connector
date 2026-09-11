@@ -21,7 +21,6 @@ part of '../health_data_type.dart';
 /// - [RunningStrideLengthRecord]
 ///
 @sinceV3_5_0
-@supportedOnAppleHealthIOS16Plus
 @immutable
 final class RunningStrideLengthDataType
     extends HealthDataType<RunningStrideLengthRecord, Length>
@@ -39,8 +38,8 @@ final class RunningStrideLengthDataType
   const RunningStrideLengthDataType();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.ios16OrLater,
   ];
 
   @override

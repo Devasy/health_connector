@@ -22,7 +22,6 @@ part of '../health_data_type.dart';
 /// - [SkinTemperatureDeltaSeriesRecord]
 ///
 @sinceV3_6_0
-@supportedOnHealthConnect
 @immutable
 final class SkinTemperatureDeltaSeriesDataType
     extends HealthDataType<SkinTemperatureDeltaSeriesRecord, Temperature>
@@ -55,8 +54,8 @@ final class SkinTemperatureDeltaSeriesDataType
   int get hashCode => runtimeType.hashCode;
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.healthConnect,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    HealthConnectRequirement.none,
   ];
 
   @override

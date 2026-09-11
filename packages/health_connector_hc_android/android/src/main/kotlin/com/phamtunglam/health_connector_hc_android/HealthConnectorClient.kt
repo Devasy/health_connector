@@ -442,12 +442,6 @@ internal class HealthConnectorClient @VisibleForTesting internal constructor(
     }
 
     /**
-     * Returns whether this device can persist `ExerciseSegment.weight`, i.e. whether its
-     * Health Connect Mainline module is at SDK Extension 21 or higher.
-     */
-    fun isExerciseSegmentWeightSupported(): Boolean = supportsHealthConnectSdkExtension21
-
-    /**
      * Reads a single health record by ID.
      *
      * @param request Contains the data type and record ID to read

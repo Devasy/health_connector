@@ -3,7 +3,7 @@
 ## Product identity
 
 - App name: `Health Connector Toolbox`
-- Version: `1.0.0` (`3`)
+- Version: `1.0.0` (`4`)
 - Android application ID: `com.phamtunglam.healthconnector`
 - Apple bundle ID: `com.phamtunglam.healthconnector`
 - Default locale: English (United States)
@@ -24,16 +24,16 @@ Google Play short description:
 
 App Store description:
 
-> Health Connector Toolbox helps you inspect and manage the health data already
-> stored in Apple Health on your iPhone or iPad.
+> Health Connector Toolbox uses Apple's HealthKit framework to help you inspect
+> and manage health data stored in the Health app on your iPhone or iPad.
 >
 > Choose exactly which data types the app can access. Browse records over a time
 > range, view totals and averages for supported metrics, add health entries, and
 > delete entries created by the Toolbox.
 >
-> Optional Developer Tools show permission state, mapped record metadata,
-> supported aggregation operations, and incremental sync behavior for the same
-> on-device flows. These tools never expand the permissions you choose.
+> SDK Operations on the main screen show permission state, mapped record
+> metadata, supported writes and aggregation operations, and incremental sync
+> behavior. These operations never expand the permissions you choose.
 >
 > Your health data stays on your device. The Toolbox has no account, ads,
 > analytics, tracking, or remote service. It never uploads health records. The
@@ -53,9 +53,9 @@ Google Play full description:
 > range, view totals and averages for supported metrics, add health entries, and
 > delete entries created by the Toolbox.
 >
-> Optional Developer Tools show permission state, mapped record metadata,
-> supported aggregation operations, and incremental sync behavior for the same
-> on-device flows. These tools never expand the permissions you choose.
+> SDK Operations on the main screen show permission state, mapped record
+> metadata, supported writes and aggregation operations, and incremental sync
+> behavior. These operations never expand the permissions you choose.
 >
 > Your health data stays on your device. The Toolbox has no account, ads,
 > analytics, tracking, or remote service. It never uploads health records. The
@@ -65,7 +65,7 @@ Google Play full description:
 What's new:
 
 > Initial public release for browsing, summarizing, adding, and managing
-> on-device health data, with optional SDK diagnostics.
+> on-device health data with SDK operation tools.
 
 ## URLs
 
@@ -87,7 +87,6 @@ What's new:
   - `screenshots/ios/ipad_pro_13/01_home.png`
   - `screenshots/ios/ipad_pro_13/02_data_access.png`
   - `screenshots/ios/ipad_pro_13/03_summary.png`
-  - `screenshots/ios/ipad_pro_13/05_developer_tools.png`
   - `screenshots/ios/ipad_pro_13/04_privacy.png`
 
 ## Privacy declarations
@@ -100,14 +99,19 @@ What's new:
 ## Review notes
 
 > No account or login is required. On first launch, the app initializes the
-> platform health service. Open Choose Data Access, select one or more data
-> types, and approve the system permission sheet. Browse Health Data displays
-> records for the chosen time range. Add Health Entry saves only the entry
-> entered by the reviewer, and the app can delete only records it created.
-> Health Summary calculates supported totals, averages, minimums, or maximums.
-> Health data never leaves the device. Developer Tools is an optional secondary
-> mode for inspecting technical details of those same flows. The Privacy & Data
-> card explains storage and deletion. The app provides no medical advice.
+> platform health service. Privacy & Data explains storage and deletion above
+> the SDK Operations section. Request Permissions lets reviewers select data
+> types and approve the system permission sheet. Read Health Records displays
+> records for a chosen time range. Insert Health Record saves only the entry
+> entered by the reviewer, and the app can delete only records it created. Read
+> Aggregate Data calculates supported totals, averages, minimums, or maximums.
+> Incremental Data Sync shows changes for authorized data types. Health data
+> never leaves the device. The app provides no medical advice.
+>
+> This iOS build uses HealthKit only; it does not use CareKit. On launch, the
+> Health Data Source card identifies the integration as "Apple Health
+> (HealthKit)" and explains its authorized read, summary, write, and delete
+> operations. The Privacy & Data page provides the same HealthKit disclosure.
 
 ## Android release signing
 
@@ -124,8 +128,8 @@ keystore outside Git and back it up separately from this checkout.
 - Complete Google's Health apps declaration for every requested Health Connect
   data type and connect each permission to a visible browse, summary, or entry
   feature.
-- Keep the personal health-data inspector as the primary purpose in the UI and
-  marketing. Developer Tools must remain optional and must not expand access.
+- Keep SDK Operations limited to the user's on-device health data and selected
+  permissions. They must not expand access.
 - If Play Console requires it, keep at least 12 testers opted in to the closed
   test continuously for 14 days before applying for production access.
 - Obtain explicit approval before uploading builds or submitting either app.

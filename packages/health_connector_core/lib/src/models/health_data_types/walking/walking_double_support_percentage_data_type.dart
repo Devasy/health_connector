@@ -66,7 +66,6 @@ part of '../health_data_type.dart';
 /// ```
 ///
 @sinceV3_2_0
-@supportedOnAppleHealth
 @immutable
 final class WalkingDoubleSupportPercentageDataType
     extends HealthDataType<WalkingDoubleSupportPercentageRecord, Percentage>
@@ -89,8 +88,8 @@ final class WalkingDoubleSupportPercentageDataType
   const WalkingDoubleSupportPercentageDataType();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

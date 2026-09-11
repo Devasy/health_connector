@@ -1,3 +1,19 @@
+## 3.10.1
+
+- **FEAT**: Add runtime platform and OS requirement checks through
+  `HealthConnector.getSupportStatusFor`, backed by an immutable
+  `operatingSystemInfo` snapshot
+  ([#223](https://github.com/fam-tung-lam/health_connector/pull/223)).
+- **DEPRECATED**: Replace platform-only support projections and legacy
+  `supportedOn…` annotations with `healthPlatformRequirements`. Deprecated APIs
+  remain available until 4.0.0
+  ([#223](https://github.com/fam-tung-lam/health_connector/pull/223)).
+- **FIX**: Define `ExerciseType.cycling` as outdoor cycling and
+  `ExerciseType.cyclingStationary` as indoor cycling across HealthKit and
+  Health Connect
+  ([#218](https://github.com/fam-tung-lam/health_connector/issues/218),
+  [e5e0796d](https://github.com/fam-tung-lam/health_connector/commit/e5e0796d4de3c4850785d7e7ec29d9748414fdd7)).
+
 ## 3.10.0
 
 - **FEAT**(hc_android): Support built-in Kotlin for Flutter versions earlier than 3.44. ([32949a7a](https://github.com/fam-tung-lam/health_connector/commit/32949a7a652e9de99056d04f11ff26951e00ea54))

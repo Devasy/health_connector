@@ -1,6 +1,7 @@
 package com.phamtunglam.health_connector_hc_android
 
 import android.content.Context
+import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.annotation.VisibleForTesting
 import com.phamtunglam.health_connector_hc_android.exceptions.HealthConnectorException
@@ -21,6 +22,7 @@ import com.phamtunglam.health_connector_hc_android.pigeon.HealthPlatformFeatureD
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthPlatformFeatureStatusDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthPlatformStatusDto
 import com.phamtunglam.health_connector_hc_android.pigeon.HealthRecordDto
+import com.phamtunglam.health_connector_hc_android.pigeon.OperatingSystemInfoDto
 import com.phamtunglam.health_connector_hc_android.pigeon.PermissionRequestDto
 import com.phamtunglam.health_connector_hc_android.pigeon.PermissionRequestResultDto
 import com.phamtunglam.health_connector_hc_android.pigeon.PermissionRequestsDto
@@ -28,6 +30,7 @@ import com.phamtunglam.health_connector_hc_android.pigeon.PermissionStatusDto
 import com.phamtunglam.health_connector_hc_android.pigeon.ReadRecordRequestDto
 import com.phamtunglam.health_connector_hc_android.pigeon.ReadRecordsRequestDto
 import com.phamtunglam.health_connector_hc_android.pigeon.ReadRecordsResponseDto
+import com.phamtunglam.health_connector_hc_android.utils.SdkExtensionUtils
 import com.phamtunglam.health_connector_hc_android.utils.aggregationMetric
 import com.phamtunglam.health_connector_hc_android.utils.dataType
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -212,7 +215,10 @@ class HealthConnectorHCAndroidPlugin @VisibleForTesting internal constructor(
      * @param config Configuration settings for the Health Connector
      * @param callback Called with a [Result] indicating success or failure
      */
-    override fun initialize(config: HealthConnectorConfigDto, callback: (Result<Unit>) -> Unit) {
+    override fun initialize(
+        config: HealthConnectorConfigDto,
+        callback: (Result<OperatingSystemInfoDto>) -> Unit,
+    ) {
         val operation = "initialize"
         val logContext = mapOf("is_logger_enabled" to config.isLoggerEnabled)
 
@@ -240,12 +246,22 @@ class HealthConnectorHCAndroidPlugin @VisibleForTesting internal constructor(
 
                 HealthConnectorLogger.isEnabled = config.isLoggerEnabled
 
+                val operatingSystemInfo = OperatingSystemInfoDto(
+                    apiLevel = Build.VERSION.SDK_INT.toLong(),
+                    sdkExtensionVersions = SdkExtensionUtils.snapshotSdkExtensionVersions(),
+                )
+
                 HealthConnectorLogger.debug(
                     TAG,
                     operation = operation,
                     message = "Initialized Health Connector Android plugin.",
-                    context = logContext,
+                    context = logContext + mapOf(
+                        "api_level" to operatingSystemInfo.apiLevel,
+                        "sdk_extension_versions" to operatingSystemInfo.sdkExtensionVersions,
+                    ),
                 )
+
+                operatingSystemInfo
             }
         }
     }
@@ -517,38 +533,6 @@ class HealthConnectorHCAndroidPlugin @VisibleForTesting internal constructor(
                     operation = operation,
                     message = "Got feature status.",
                     context = logContext,
-                )
-
-                result
-            }
-        }
-    }
-
-    /**
-     * Returns whether this device can persist `ExerciseSegment.weight`.
-     *
-     * @param callback Called with a [Result] containing `true` if the device's Health Connect
-     *   Mainline module is at SDK Extension 21 or higher, `false` otherwise
-     */
-    @Throws(HealthConnectorErrorDto::class)
-    override fun isExerciseSegmentWeightSupported(callback: (Result<Boolean>) -> Unit) {
-        val operation = "is_exercise_segment_weight_supported"
-
-        scope.launch {
-            process(operation = operation, callback = callback) {
-                HealthConnectorLogger.debug(
-                    TAG,
-                    operation = operation,
-                    message = "Checking exercise segment weight support...",
-                )
-
-                val result = requireClient().isExerciseSegmentWeightSupported()
-
-                HealthConnectorLogger.info(
-                    TAG,
-                    operation = operation,
-                    message = "Checked exercise segment weight support.",
-                    context = mapOf("result" to result),
                 )
 
                 result

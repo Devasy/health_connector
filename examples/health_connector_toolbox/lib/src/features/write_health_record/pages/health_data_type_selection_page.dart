@@ -35,8 +35,8 @@ class _HealthDataTypeSelectionPageState
   _getFilteredDataTypesByCategory() {
     final allDataTypes = HealthDataType.values
         .where(
-          (type) =>
-              type.supportedHealthPlatforms.contains(widget.healthPlatform),
+          (type) => type.healthPlatformRequirements.supportedHealthPlatforms
+              .contains(widget.healthPlatform),
         )
         .whereType<WriteableHealthDataType>()
         .cast<HealthDataType>()

@@ -27,7 +27,6 @@ part of '../health_data_type.dart';
 /// - [SystolicBloodPressureRecord]
 ///
 @sinceV1_2_0
-@supportedOnAppleHealth
 @immutable
 final class SystolicBloodPressureDataType
     extends HealthDataType<SystolicBloodPressureRecord, Pressure>
@@ -61,8 +60,8 @@ final class SystolicBloodPressureDataType
   int get hashCode => runtimeType.hashCode;
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

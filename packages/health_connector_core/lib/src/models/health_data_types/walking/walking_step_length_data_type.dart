@@ -59,7 +59,6 @@ part of '../health_data_type.dart';
 /// ```
 ///
 @sinceV3_2_0
-@supportedOnAppleHealth
 @immutable
 final class WalkingStepLengthDataType
     extends HealthDataType<WalkingStepLengthRecord, Length>
@@ -80,8 +79,8 @@ final class WalkingStepLengthDataType
   const WalkingStepLengthDataType();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

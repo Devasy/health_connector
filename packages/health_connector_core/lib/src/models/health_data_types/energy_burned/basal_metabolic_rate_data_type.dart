@@ -34,7 +34,6 @@ part of '../health_data_type.dart';
 /// - [BasalMetabolicRateRecord]
 ///
 @sinceV3_6_0
-@supportedOnHealthConnect
 @immutable
 final class BasalMetabolicRateDataType
     extends HealthDataType<BasalMetabolicRateRecord, Energy>
@@ -64,8 +63,8 @@ final class BasalMetabolicRateDataType
   int get hashCode => runtimeType.hashCode;
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.healthConnect,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    HealthConnectRequirement.none,
   ];
 
   @override

@@ -21,7 +21,6 @@ part of 'health_data_type.dart';
 /// - [BodyWaterMassRecord]
 ///
 @sinceV2_2_0
-@supportedOnHealthConnect
 @immutable
 final class BodyWaterMassDataType
     extends HealthDataType<BodyWaterMassRecord, Mass>
@@ -44,8 +43,8 @@ final class BodyWaterMassDataType
   List<AggregationMetric> get supportedAggregationMetrics => [];
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.healthConnect,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    HealthConnectRequirement.none,
   ];
 
   @override

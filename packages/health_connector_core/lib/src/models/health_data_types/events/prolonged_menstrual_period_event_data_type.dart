@@ -30,7 +30,6 @@ part of '../health_data_type.dart';
 /// - [IntermenstrualBleedingRecord]
 ///
 @sinceV3_4_0
-@supportedOnAppleHealthIOS16Plus
 @readOnly
 @immutable
 final class ProlongedMenstrualPeriodEventDataType
@@ -49,8 +48,8 @@ final class ProlongedMenstrualPeriodEventDataType
   String get id => 'prolonged_menstrual_period_event';
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.ios16OrLater,
   ];
 
   @override

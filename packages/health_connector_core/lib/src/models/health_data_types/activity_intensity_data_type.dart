@@ -53,7 +53,6 @@ part of 'health_data_type.dart';
 /// ```
 ///
 @sinceV3_2_0
-@supportedOnHealthConnect
 @immutable
 final class ActivityIntensityDataType
     extends HealthDataType<ActivityIntensityRecord, TimeDuration>
@@ -72,8 +71,8 @@ final class ActivityIntensityDataType
   const ActivityIntensityDataType();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.healthConnect,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    HealthConnectRequirement.none,
   ];
 
   @override

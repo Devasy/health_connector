@@ -22,10 +22,10 @@ part of '../health_record.dart';
 /// ## Platform-Specific Types
 ///
 /// Some types are only available on specific platforms:
-/// - **iOS-only**: Types annotated with `@supportedOnAppleHealth` (e.g.,
-///   [waterFitness], [pickleball]).
-/// - **Android-only**: Types annotated with `@supportedOnHealthConnect` (e.g.,
-///   [runningTreadmill], [weightlifting]).
+/// - **iOS-only**: Types whose [healthPlatformRequirements] contain only an
+///   [AppleHealthRequirement] (e.g., [waterFitness], [pickleball]).
+/// - **Android-only**: Types whose [healthPlatformRequirements] contain only a
+///   [HealthConnectRequirement] (e.g., [runningTreadmill], [weightlifting]).
 ///
 /// Attempting to use a platform-specific type on an unsupported platform will
 /// result in a runtime error.
@@ -60,8 +60,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: `EXERCISE_TYPE_RUNNING_TREADMILL`
   ///
   /// Throws [UnsupportedOperationException] on iOS HealthKit.
-  @supportedOnHealthConnect
-  runningTreadmill,
+  runningTreadmill._healthConnectOnly(),
 
   /// Walking activity.
   ///
@@ -70,21 +69,20 @@ enum ExerciseType {
   /// - **Android Health Connect**: `EXERCISE_TYPE_WALKING`
   walking,
 
-  /// Cycling or biking activity.
+  /// Outdoor cycling or biking activity.
   ///
   /// **Platform Mappings:**
-  /// - **iOS HealthKit**: `HKWorkoutActivityType.cycling`
+  /// - **iOS HealthKit**: `HKWorkoutActivityType.cycling` when
+  ///   `HKMetadataKeyIndoorWorkout` is `false`, missing, or invalid
   /// - **Android Health Connect**: `EXERCISE_TYPE_BIKING`
   cycling,
 
-  /// Stationary cycling or biking.
+  /// Stationary cycling or biking, normalized as indoor cycling.
   ///
   /// **Platform Mappings:**
-  /// - **iOS HealthKit**: Not supported
+  /// - **iOS HealthKit**: `HKWorkoutActivityType.cycling` with
+  ///   `HKMetadataKeyIndoorWorkout == true`
   /// - **Android Health Connect**: `EXERCISE_TYPE_BIKING_STATIONARY`
-  ///
-  /// Throws [UnsupportedOperationException] on iOS HealthKit.
-  @supportedOnHealthConnect
   cyclingStationary,
 
   /// Hiking activity.
@@ -101,8 +99,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  handCycling,
+  handCycling._appleHealthOnly(),
 
   /// Track and field activities (iOS HealthKit only).
   ///
@@ -111,8 +108,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  trackAndField,
+  trackAndField._appleHealthOnly(),
 
   //endregion
 
@@ -126,8 +122,7 @@ enum ExerciseType {
   /// `swimmingOpenWater`)
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  swimming,
+  swimming._appleHealthOnly(),
 
   /// Swimming in open water.
   ///
@@ -136,8 +131,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: `EXERCISE_TYPE_SWIMMING_OPEN_WATER`
   ///
   /// Throws [UnsupportedOperationException] on iOS HealthKit.
-  @supportedOnHealthConnect
-  swimmingOpenWater,
+  swimmingOpenWater._healthConnectOnly(),
 
   /// Swimming in a pool.
   ///
@@ -146,8 +140,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: `EXERCISE_TYPE_SWIMMING_POOL`
   ///
   /// Throws [UnsupportedOperationException] on iOS HealthKit.
-  @supportedOnHealthConnect
-  swimmingPool,
+  swimmingPool._healthConnectOnly(),
 
   /// Surfing activity.
   ///
@@ -192,9 +185,9 @@ enum ExerciseType {
   /// Diving activities including scuba diving and free diving.
   ///
   /// **Platform Mappings:**
-  /// - **iOS HealthKit**: `HKWorkoutActivityType.underwaterDiving`
+  /// - **iOS HealthKit 17+**: `HKWorkoutActivityType.underwaterDiving`
   /// - **Android Health Connect**: `EXERCISE_TYPE_SCUBA_DIVING`
-  diving,
+  diving._appleHealthIOS17(),
 
   /// Water fitness.
   ///
@@ -203,8 +196,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  waterFitness,
+  waterFitness._appleHealthOnly(),
 
   /// Water sports.
   ///
@@ -213,8 +205,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  waterSports,
+  waterSports._appleHealthOnly(),
 
   //endregion
 
@@ -234,8 +225,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: `EXERCISE_TYPE_WEIGHTLIFTING`
   ///
   /// Throws [UnsupportedOperationException] on iOS HealthKit.
-  @supportedOnHealthConnect
-  weightlifting,
+  weightlifting._healthConnectOnly(),
 
   /// Calisthenics (bodyweight exercises).
   ///
@@ -244,8 +234,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: `EXERCISE_TYPE_CALISTHENICS`
   ///
   /// Throws [UnsupportedOperationException] on iOS HealthKit.
-  @supportedOnHealthConnect
-  calisthenics,
+  calisthenics._healthConnectOnly(),
 
   //endregion
 
@@ -335,8 +324,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: `EXERCISE_TYPE_ICE_HOCKEY`
   ///
   /// Throws [UnsupportedOperationException] on iOS HealthKit.
-  @supportedOnHealthConnect
-  iceHockey,
+  iceHockey._healthConnectOnly(),
 
   /// Roller hockey sport.
   ///
@@ -345,8 +333,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: `EXERCISE_TYPE_ROLLER_HOCKEY`
   ///
   /// Throws [UnsupportedOperationException] on iOS HealthKit.
-  @supportedOnHealthConnect
-  rollerHockey,
+  rollerHockey._healthConnectOnly(),
 
   /// Field hockey sport.
   ///
@@ -355,8 +342,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  hockey,
+  hockey._appleHealthOnly(),
 
   /// Lacrosse sport (iOS HealthKit only).
   ///
@@ -365,8 +351,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  lacrosse,
+  lacrosse._appleHealthOnly(),
 
   /// Disc sports like frisbee or disc golf (iOS HealthKit only).
   ///
@@ -378,8 +363,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  discSports,
+  discSports._appleHealthOnly(),
 
   //endregion
 
@@ -427,8 +411,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  pickleball,
+  pickleball._appleHealthOnly(),
 
   //endregion
 
@@ -442,8 +425,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: `EXERCISE_TYPE_SKIING`
   ///
   /// Throws [UnsupportedOperationException] on iOS HealthKit.
-  @supportedOnHealthConnect
-  skiing,
+  skiing._healthConnectOnly(),
 
   /// Snowboarding activity.
   ///
@@ -459,8 +441,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: `EXERCISE_TYPE_SNOWSHOEING`
   ///
   /// Throws [UnsupportedOperationException] on iOS HealthKit.
-  @supportedOnHealthConnect
-  snowshoeing,
+  snowshoeing._healthConnectOnly(),
 
   /// Skating activity.
   ///
@@ -481,8 +462,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  crossCountrySkiing,
+  crossCountrySkiing._appleHealthOnly(),
 
   /// Curling sport (iOS HealthKit only).
   ///
@@ -491,8 +471,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  curling,
+  curling._appleHealthOnly(),
 
   /// Downhill skiing (iOS HealthKit only).
   ///
@@ -501,8 +480,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  downhillSkiing,
+  downhillSkiing._appleHealthOnly(),
 
   /// Snow sports general (iOS HealthKit only).
   ///
@@ -511,8 +489,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  snowSports,
+  snowSports._appleHealthOnly(),
 
   //endregion
 
@@ -532,8 +509,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  kickboxing,
+  kickboxing._appleHealthOnly(),
 
   /// General martial arts training.
   ///
@@ -549,8 +525,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  wrestling,
+  wrestling._appleHealthOnly(),
 
   /// Fencing sport.
   ///
@@ -566,8 +541,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  taiChi,
+  taiChi._appleHealthOnly(),
 
   //endregion
 
@@ -580,8 +554,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: `EXERCISE_TYPE_DANCING`
   ///
   /// Throws [UnsupportedOperationException] on iOS HealthKit.
-  @supportedOnHealthConnect
-  dancing,
+  dancing._healthConnectOnly(),
 
   /// Gymnastics activity.
   ///
@@ -597,8 +570,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  barre,
+  barre._appleHealthOnly(),
 
   /// Cardio dance (iOS HealthKit only).
   ///
@@ -607,8 +579,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  cardioDance,
+  cardioDance._appleHealthOnly(),
 
   /// Social dance (iOS HealthKit only).
   ///
@@ -617,8 +588,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  socialDance,
+  socialDance._appleHealthOnly(),
 
   //endregion
 
@@ -660,8 +630,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: `EXERCISE_TYPE_EXERCISE_CLASS`
   ///
   /// Throws [UnsupportedOperationException] on iOS HealthKit.
-  @supportedOnHealthConnect
-  exerciseClass,
+  exerciseClass._healthConnectOnly(),
 
   /// Boot camp training.
   ///
@@ -670,8 +639,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: `EXERCISE_TYPE_BOOT_CAMP`
   ///
   /// Throws [UnsupportedOperationException] on iOS HealthKit.
-  @supportedOnHealthConnect
-  bootCamp,
+  bootCamp._healthConnectOnly(),
 
   /// Guided breathing session.
   ///
@@ -680,8 +648,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: `EXERCISE_TYPE_GUIDED_BREATHING`
   ///
   /// Throws [UnsupportedOperationException] on iOS HealthKit.
-  @supportedOnHealthConnect
-  guidedBreathing,
+  guidedBreathing._healthConnectOnly(),
 
   /// Stair climbing activity.
   ///
@@ -703,8 +670,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  crossTraining,
+  crossTraining._appleHealthOnly(),
 
   /// Jump rope exercise.
   ///
@@ -713,8 +679,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  jumpRope,
+  jumpRope._appleHealthOnly(),
 
   /// Fitness gaming activities (iOS HealthKit only).
   ///
@@ -723,8 +688,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  fitnessGaming,
+  fitnessGaming._appleHealthOnly(),
 
   /// Mixed cardio exercise (iOS HealthKit only).
   ///
@@ -733,8 +697,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  mixedCardio,
+  mixedCardio._appleHealthOnly(),
 
   /// Cooldown activity (iOS HealthKit only).
   ///
@@ -743,8 +706,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  cooldown,
+  cooldown._appleHealthOnly(),
 
   /// Flexibility and stretching exercises.
   ///
@@ -760,8 +722,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  mindAndBody,
+  mindAndBody._appleHealthOnly(),
 
   /// Preparation and recovery (iOS HealthKit only).
   ///
@@ -770,8 +731,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  preparationAndRecovery,
+  preparationAndRecovery._appleHealthOnly(),
 
   /// Step training (iOS HealthKit only).
   ///
@@ -780,8 +740,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  stepTraining,
+  stepTraining._appleHealthOnly(),
 
   /// Core training (iOS HealthKit only).
   ///
@@ -790,8 +749,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  coreTraining,
+  coreTraining._appleHealthOnly(),
 
   //endregion
 
@@ -811,8 +769,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  archery,
+  archery._appleHealthOnly(),
 
   /// Bowling sport (iOS HealthKit only).
   ///
@@ -821,8 +778,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  bowling,
+  bowling._appleHealthOnly(),
 
   //endregion
 
@@ -835,8 +791,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: `EXERCISE_TYPE_PARAGLIDING`
   ///
   /// Throws [UnsupportedOperationException] on iOS HealthKit.
-  @supportedOnHealthConnect
-  paragliding,
+  paragliding._healthConnectOnly(),
 
   /// Climbing activity (including rock climbing and bouldering).
   ///
@@ -852,8 +807,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  equestrianSports,
+  equestrianSports._appleHealthOnly(),
 
   /// Fishing activity (iOS HealthKit only).
   ///
@@ -862,8 +816,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  fishing,
+  fishing._appleHealthOnly(),
 
   /// Hunting activity (iOS HealthKit only).
   ///
@@ -872,8 +825,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  hunting,
+  hunting._appleHealthOnly(),
 
   /// Play (general) activity (iOS HealthKit only).
   ///
@@ -882,8 +834,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  play,
+  play._appleHealthOnly(),
 
   //endregion
 
@@ -896,8 +847,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: `EXERCISE_TYPE_WHEELCHAIR`
   ///
   /// Throws [UnsupportedOperationException] on iOS HealthKit.
-  @supportedOnHealthConnect
-  wheelchair,
+  wheelchair._healthConnectOnly(),
 
   /// Wheelchair walk pace.
   ///
@@ -906,8 +856,7 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  wheelchairWalkPace,
+  wheelchairWalkPace._appleHealthOnly(),
 
   /// Wheelchair run pace.
   ///
@@ -916,34 +865,59 @@ enum ExerciseType {
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  wheelchairRunPace,
+  wheelchairRunPace._appleHealthOnly(),
 
   //endregion
 
   //region Multisport
 
-  /// Transition between activities (iOS HealthKit only).
+  /// Transition between activities (iOS HealthKit 16+ only).
   ///
   /// **Platform Mappings:**
-  /// - **iOS HealthKit**: `HKWorkoutActivityType.transition`
+  /// - **iOS HealthKit 16+**: `HKWorkoutActivityType.transition`
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  transition,
+  transition._appleHealthOnlyIOS16(),
 
   /// Multisport (Swim Bike Run / Triathlon).
   ///
   /// **Platform Mappings:**
-  /// - **iOS HealthKit**: `HKWorkoutActivityType.swimBikeRun`
+  /// - **iOS HealthKit 16+**: `HKWorkoutActivityType.swimBikeRun`
   /// - **Android Health Connect**: Not supported
   ///
   /// Throws [UnsupportedOperationException] on Android Health Connect.
-  @supportedOnAppleHealth
-  swimBikeRun,
+  swimBikeRun._appleHealthOnlyIOS16();
 
   //endregion
+
+  /// Creates an exercise type available on both health platforms.
+  const ExerciseType()
+    : healthPlatformRequirements =
+          HealthPlatformRequirement.allPlatformsWithoutRequirements;
+
+  const ExerciseType._healthConnectOnly()
+    : healthPlatformRequirements = const [
+        HealthConnectRequirement.none,
+      ];
+
+  const ExerciseType._appleHealthOnly()
+    : healthPlatformRequirements = const [
+        AppleHealthRequirement.none,
+      ];
+
+  const ExerciseType._appleHealthOnlyIOS16()
+    : healthPlatformRequirements = const [AppleHealthRequirement.ios16OrLater];
+
+  const ExerciseType._appleHealthIOS17()
+    : healthPlatformRequirements = const [
+        AppleHealthRequirement.ios17OrLater,
+        HealthConnectRequirement.none,
+      ];
+
+  /// Requirements for each platform that supports this exercise type.
+  @sinceV3_11_0
+  final List<HealthPlatformRequirement> healthPlatformRequirements;
 }
 
 /// Extension on [ExerciseType] that provides static getters for
@@ -967,24 +941,30 @@ extension ExerciseTypeExtension on ExerciseType {
   /// Returns a list of all [ExerciseType] values supported on Apple Health
   /// (iOS HealthKit).
   static List<ExerciseType> get appleHealthTypes => ExerciseType.values
-      .where((type) => !_healthConnectOnlyTypes.contains(type))
+      .where(
+        (type) => type.healthPlatformRequirements.supportedHealthPlatforms
+            .contains(HealthPlatform.appleHealth),
+      )
       .toList();
 
   /// Returns a list of all [ExerciseType] values supported on Health Connect
   /// (Android).
   static List<ExerciseType> get healthConnectTypes => ExerciseType.values
-      .where((type) => !_appleHealthOnlyTypes.contains(type))
+      .where(
+        (type) => type.healthPlatformRequirements.supportedHealthPlatforms
+            .contains(HealthPlatform.healthConnect),
+      )
       .toList();
 
   /// Checks if this exercise type is supported on the given [platform].
-  bool isSupportedOnPlatform(HealthPlatform platform) {
-    switch (platform) {
-      case HealthPlatform.appleHealth:
-        return !_healthConnectOnlyTypes.contains(this);
-      case HealthPlatform.healthConnect:
-        return !_appleHealthOnlyTypes.contains(this);
-    }
-  }
+  @Deprecated(
+    'Use healthPlatformRequirements.supportedHealthPlatforms and call '
+    'contains(platform) for platform support, or '
+    'HealthConnector.getSupportStatusFor for runtime version support. '
+    'Will be removed in 4.0.0.',
+  )
+  bool isSupportedOnPlatform(HealthPlatform platform) =>
+      healthPlatformRequirements.supportedHealthPlatforms.contains(platform);
 
   /// Returns a list of [ExerciseType] values that are exclusively supported on
   /// the given [platform].
@@ -997,10 +977,8 @@ extension ExerciseTypeExtension on ExerciseType {
   ///
   /// A list of [ExerciseType] values that are only supported on the given
   /// [platform]:
-  /// - For [HealthPlatform.appleHealth]: Returns iOS-only types (annotated
-  ///   with @[supportedOnAppleHealth])
-  /// - For [HealthPlatform.healthConnect]: Returns Android-only types
-  ///   (annotated with @[supportedOnHealthConnect])
+  /// - For [HealthPlatform.appleHealth]: Returns iOS-only types.
+  /// - For [HealthPlatform.healthConnect]: Returns Android-only types.
   ///
   /// ## Example
   ///
@@ -1015,82 +993,16 @@ extension ExerciseTypeExtension on ExerciseType {
   /// final androidOnlyTypes = ExerciseType.other.getExerciseTypesForPlatform(
   ///   HealthPlatform.healthConnect,
   /// );
-  /// // Returns: [runningTreadmill, cyclingStationary, weightlifting, ...]
+  /// // Returns: [runningTreadmill, weightlifting, ...]
   /// ```
   List<ExerciseType> getExerciseTypesForPlatform(HealthPlatform platform) {
-    switch (platform) {
-      case HealthPlatform.appleHealth:
-        return _appleHealthOnlyTypes.toList();
-      case HealthPlatform.healthConnect:
-        return _healthConnectOnlyTypes.toList();
-    }
+    return ExerciseType.values.where((type) {
+      final supportedHealthPlatforms =
+          type.healthPlatformRequirements.supportedHealthPlatforms;
+      return supportedHealthPlatforms.length == 1 &&
+          supportedHealthPlatforms.single == platform;
+    }).toList();
   }
-
-  /// Internal sets for platform validation based on Android Health Connect
-  /// support. The lists must match the [supportedOnHealthConnect] annotation
-  /// on the enum values.
-  static const Set<ExerciseType> _healthConnectOnlyTypes = {
-    ExerciseType.runningTreadmill,
-    ExerciseType.cyclingStationary,
-    ExerciseType.swimmingOpenWater,
-    ExerciseType.swimmingPool,
-    ExerciseType.weightlifting,
-    ExerciseType.calisthenics,
-    ExerciseType.iceHockey,
-    ExerciseType.rollerHockey,
-    ExerciseType.skiing,
-    ExerciseType.snowshoeing,
-    ExerciseType.dancing,
-    ExerciseType.exerciseClass,
-    ExerciseType.bootCamp,
-    ExerciseType.guidedBreathing,
-    ExerciseType.paragliding,
-    ExerciseType.wheelchair,
-  };
-
-  /// Internal sets for platform validation based on iOS HealthKit support.
-  /// The lists must match the [supportedOnAppleHealth] annotation on the enum
-  /// values.
-  static const Set<ExerciseType> _appleHealthOnlyTypes = {
-    ExerciseType.swimming,
-    ExerciseType.waterFitness,
-    ExerciseType.waterSports,
-    ExerciseType.hockey,
-    ExerciseType.kickboxing,
-    ExerciseType.wrestling,
-    ExerciseType.crossTraining,
-    ExerciseType.jumpRope,
-    ExerciseType.wheelchairWalkPace,
-    ExerciseType.wheelchairRunPace,
-    ExerciseType.swimBikeRun,
-    ExerciseType.pickleball,
-    ExerciseType.discSports,
-    ExerciseType.fitnessGaming,
-    ExerciseType.barre,
-    ExerciseType.taiChi,
-    ExerciseType.mixedCardio,
-    ExerciseType.handCycling,
-    ExerciseType.cooldown,
-    ExerciseType.archery,
-    ExerciseType.bowling,
-    ExerciseType.curling,
-    ExerciseType.equestrianSports,
-    ExerciseType.fishing,
-    ExerciseType.hunting,
-    ExerciseType.lacrosse,
-    ExerciseType.mindAndBody,
-    ExerciseType.play,
-    ExerciseType.preparationAndRecovery,
-    ExerciseType.stepTraining,
-    ExerciseType.trackAndField,
-    ExerciseType.transition,
-    ExerciseType.crossCountrySkiing,
-    ExerciseType.downhillSkiing,
-    ExerciseType.snowSports,
-    ExerciseType.cardioDance,
-    ExerciseType.socialDance,
-    ExerciseType.coreTraining,
-  };
 
   // region Segment-type compatibility
 

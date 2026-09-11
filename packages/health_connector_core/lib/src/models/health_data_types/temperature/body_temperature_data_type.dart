@@ -39,7 +39,8 @@ final class BodyTemperatureDataType
   const BodyTemperatureDataType();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => HealthPlatform.values;
+  List<HealthPlatformRequirement> get healthPlatformRequirements =>
+      HealthPlatformRequirement.allPlatformsWithoutRequirements;
 
   @override
   String get id => 'body_temperature';

@@ -14,8 +14,6 @@ abstract final class AppIcons {
   static const IconData cancel = Icons.cancel;
   static const IconData save = Icons.save;
   static const IconData time = Icons.access_time;
-  static const IconData store = Icons.store;
-  static const IconData developerMode = Icons.developer_mode;
   static const IconData sync = Icons.sync;
 
   // Health & Data

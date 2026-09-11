@@ -29,7 +29,6 @@ part of '../health_data_type.dart';
 /// - [IntermenstrualBleedingRecord]
 ///
 @sinceV3_4_0
-@supportedOnAppleHealthIOS16Plus
 @readOnly
 @immutable
 final class InfrequentMenstrualCycleEventDataType
@@ -48,8 +47,8 @@ final class InfrequentMenstrualCycleEventDataType
   String get id => 'infrequent_menstrual_cycle_event';
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.ios16OrLater,
   ];
 
   @override

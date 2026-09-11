@@ -116,13 +116,6 @@ abstract interface class HealthConnector {
           '$healthPlatform needs installation or update.',
         );
       case HealthPlatformStatus.available:
-        HealthConnectorLogger.info(
-          _tag,
-          operation: 'create',
-          message: 'HealthConnector created successfully',
-          context: {'platform': healthPlatform.name},
-        );
-
         final healthPlatformClient = switch (healthPlatform) {
           HealthPlatform.appleHealth => await HealthConnectorHKClient.create(
             config,
@@ -131,6 +124,17 @@ abstract interface class HealthConnector {
             config,
           ),
         };
+
+        HealthConnectorLogger.info(
+          _tag,
+          operation: 'create',
+          message: 'HealthConnector created successfully',
+          context: {
+            'platform': healthPlatform.name,
+            'operating_system_info': healthPlatformClient.operatingSystemInfo
+                .toString(),
+          },
+        );
 
         return HealthConnectorImpl(
           config: config,
@@ -250,7 +254,6 @@ abstract interface class HealthConnector {
   /// }
   /// ```
   @sinceV2_3_0
-  @supportedOnHealthConnect
   static Future<void> launchHealthAppPageInAppStore() async {
     final healthPlatform = Platform.isIOS
         ? HealthPlatform.appleHealth
@@ -439,7 +442,6 @@ abstract interface class HealthConnector {
   ///   }
   /// }
   /// ```
-  @supportedOnHealthConnect
   Future<List<Permission>> getGrantedPermissions();
 
   /// Gets the current permission status for a specific permission.
@@ -526,7 +528,6 @@ abstract interface class HealthConnector {
   ///   }
   /// }
   /// ```
-  @supportedOnHealthConnect
   Future<void> revokeAllPermissions();
 
   /// Checks the availability status of a specific platform feature.
@@ -581,28 +582,6 @@ abstract interface class HealthConnector {
   Future<HealthPlatformFeatureStatus> getFeatureStatus(
     HealthPlatformFeature feature,
   );
-
-  /// Whether this device can persist [ExerciseSessionSegmentEvent.weight].
-  ///
-  /// Health Connect requires SDK Extension 21 for segment weights; HealthKit
-  /// has no equivalent field and always reports false.
-  ///
-  /// ## Returns
-  ///
-  /// - `true` if the device can persist segment weight, `false` otherwise.
-  ///
-  /// ## Example
-  ///
-  /// ```dart
-  /// final connector = await HealthConnector.create();
-  /// if (await connector.isExerciseSegmentWeightSupported()) {
-  ///   // Safe to include ExerciseSessionSegmentEvent.weight.
-  /// } else {
-  ///   // Omit segment weight, or catch UnsupportedOperationException.
-  /// }
-  /// ```
-  @sinceV3_11_0
-  Future<bool> isExerciseSegmentWeightSupported();
 
   /// Reads a single health record by ID.
   ///
@@ -931,7 +910,6 @@ abstract interface class HealthConnector {
   ///
   /// - [deleteRecords] for deleting specific records
   /// - [writeRecord] for creating new records
-  @supportedOnHealthConnect
   Future<void> updateRecord<R extends HealthRecord>(R record);
 
   /// Updates multiple existing health records in a single batch operation.
@@ -1019,7 +997,6 @@ abstract interface class HealthConnector {
   /// - [deleteRecords] for deleting multiple records
   /// - [writeRecords] for creating multiple new records
   @sinceV2_0_0
-  @supportedOnHealthConnect
   Future<void> updateRecords<R extends HealthRecord>(List<R> records);
 
   /// Synchronizes health data using incremental change tracking.
@@ -1256,4 +1233,45 @@ abstract interface class HealthConnector {
   /// - [ExerciseRouteLocation] for individual GPS points
   @sinceV3_8_0
   Future<ExerciseRoute?> readExerciseRoute(HealthRecordId exerciseSessionId);
+}
+
+/// Runtime platform support checks for connectors created by
+/// [HealthConnector.create].
+@sinceV3_11_0
+extension HealthConnectorPlatformSupport on HealthConnector {
+  /// Device operating-system facts captured during
+  /// [HealthConnector.create].
+  ///
+  /// The snapshot remains unchanged for the lifetime of this connector.
+  ///
+  /// Throws [UnsupportedOperationException] when this connector was not
+  /// returned by [HealthConnector.create].
+  @sinceV3_11_0
+  OperatingSystemInfo get operatingSystemInfo {
+    final connector = this;
+    if (connector is HealthConnectorImpl) {
+      return connector.operatingSystemInfo;
+    }
+
+    throw const UnsupportedOperationException(
+      'Operating-system information is available only on connectors returned '
+      'by HealthConnector.create().',
+    );
+  }
+
+  /// Resolves whether this device satisfies [requirements].
+  ///
+  /// This check is synchronous and uses [operatingSystemInfo] together with
+  /// the supplied platform requirements.
+  ///
+  /// Throws [UnsupportedOperationException] when this connector was not
+  /// returned by [HealthConnector.create].
+  @sinceV3_11_0
+  HealthPlatformSupportStatus getSupportStatusFor(
+    List<HealthPlatformRequirement> requirements,
+  ) => resolveHealthPlatformSupportStatus(
+    requirements: requirements,
+    healthPlatform: healthPlatform,
+    operatingSystemInfo: operatingSystemInfo,
+  );
 }

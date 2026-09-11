@@ -9,7 +9,8 @@ abstract final class AppTexts {
   static const String healthConnectorToolbox = 'Health Connector Toolbox';
   static const String welcomeToToolbox = 'Welcome to Health Connector Toolbox';
   static const String toolboxSubtitle =
-      'Inspect and manage your health data privately';
+      'Inspect and manage your on-device health data using the Health '
+      'Connector SDK';
 
   // endregion
 
@@ -18,36 +19,8 @@ abstract final class AppTexts {
   static const String ready = 'Ready';
   static const String healthMetrics = 'Health Metrics';
   static const String quickActions = 'Quick Actions';
-  static const String exploreFeatures = 'Your Health Data';
-  static const String chooseDataAccess = 'Choose Data Access';
-  static const String browseHealthData = 'Browse Health Data';
-  static const String addHealthEntry = 'Add Health Entry';
-  static const String healthSummary = 'Health Summary';
-  static const String developerTools = 'Developer Tools';
-  static const String developerToolsDescription =
-      'Inspect SDK capabilities and platform-specific behavior';
-  static const String developerToolsSubtitle =
-      'Technical views for the same on-device health data flows. These tools '
-      'never request access beyond the permissions you choose.';
   static const String sdkOperations = 'SDK Operations';
-  static const String permissionsApi = 'Permissions API';
-  static const String recordsApi = 'Records API';
-  static const String writeApi = 'Write API';
-  static const String aggregationApi = 'Aggregation API';
-  static const String syncApi = 'Incremental Sync API';
-
   // Feature Descriptions
-  static const String openHealthAppStore = 'Open Health App Store';
-  static const String openHealthAppStoreDescription =
-      'Install or update the health app from the app store';
-  static const String permissionsDescription =
-      'Choose the health data types this app can access';
-  static const String readRecordsDescription =
-      'Browse records from Apple Health or Health Connect';
-  static const String writeRecordsDescription =
-      'Add an entry and manage records created by this app';
-  static const String aggregateDescription =
-      'View totals, averages, and ranges for selected metrics';
   static const String permissionsApiDescription =
       'Inspect permission status and platform access controls';
   static const String recordsApiDescription =
@@ -376,8 +349,14 @@ abstract final class AppTexts {
   // endregion
 
   // region Health Platforms
-  static const String appleHealth = 'Apple Health';
+  static const String appleHealth = 'Apple Health (HealthKit)';
+  static const String appleHealthIntegrationDescription =
+      'Uses HealthKit to read and summarize authorized data, and to manage '
+      'entries created by this app';
   static const String healthConnect = 'Health Connect';
+  static const String healthConnectIntegrationDescription =
+      'Uses Health Connect to read and summarize authorized data, and to '
+      'manage entries created by this app';
 
   // endregion
 
@@ -785,8 +764,6 @@ abstract final class AppTexts {
       'Failed to request permissions';
   static const String failedToLoadFeatureStatuses =
       'Failed to load feature statuses';
-  static const String failedToLaunchHealthAppStore =
-      'Failed to launch health app store';
 
   // endregion
 
@@ -1260,7 +1237,8 @@ abstract final class AppTexts {
   // Exercise Types - Common (Android + iOS)
   static const String exerciseRunning = 'Running';
   static const String exerciseWalking = 'Walking';
-  static const String exerciseCycling = 'Cycling';
+  static const String exerciseCycling = 'Outdoor Cycling';
+  static const String exerciseBikingStationary = 'Indoor Cycling';
   static const String exerciseHiking = 'Hiking';
   static const String exerciseSwimming = 'Swimming';
   static const String exerciseSurfing = 'Surfing';
@@ -1345,7 +1323,6 @@ abstract final class AppTexts {
 
   // Health Connect specific or new cross-platform types
   static const String exerciseOtherWorkout = 'Other Workout';
-  static const String exerciseBikingStationary = 'Stationary Biking';
   static const String exerciseBootCamp = 'Boot Camp';
   static const String exerciseExerciseClass = 'Exercise Class';
   static const String exerciseFrisbeeDisc = 'Frisbee Disc';

@@ -62,7 +62,6 @@ part of '../health_data_type.dart';
 /// - [ContraceptiveType]
 ///
 @sinceV3_1_0
-@supportedOnAppleHealth
 @immutable
 class ContraceptiveDataType
     extends HealthDataType<ContraceptiveRecord, MeasurementUnit>
@@ -79,8 +78,8 @@ class ContraceptiveDataType
   const ContraceptiveDataType() : super();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

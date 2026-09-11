@@ -41,7 +41,8 @@ final class ActiveEnergyBurnedDataType
   const ActiveEnergyBurnedDataType();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => HealthPlatform.values;
+  List<HealthPlatformRequirement> get healthPlatformRequirements =>
+      HealthPlatformRequirement.allPlatformsWithoutRequirements;
 
   @override
   String get id => 'active_calories_burned';

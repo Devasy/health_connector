@@ -27,7 +27,6 @@ part of '../health_data_type.dart';
 /// - [LowCardioFitnessEventRecord]
 ///
 @sinceV3_6_0
-@supportedOnAppleHealth
 @readOnly
 @immutable
 final class LowCardioFitnessEventDataType
@@ -46,8 +45,8 @@ final class LowCardioFitnessEventDataType
   String get id => 'low_cardio_fitness_event';
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

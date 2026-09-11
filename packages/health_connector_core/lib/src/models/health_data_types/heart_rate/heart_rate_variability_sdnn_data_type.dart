@@ -26,7 +26,6 @@ part of '../health_data_type.dart';
 /// - [HeartRateVariabilityRMSSDDataType] for RMSSD metric
 ///
 @sinceV2_2_0
-@supportedOnAppleHealth
 @immutable
 final class HeartRateVariabilitySDNNDataType
     extends HealthDataType<HeartRateVariabilitySDNNRecord, TimeDuration>
@@ -52,8 +51,8 @@ final class HeartRateVariabilitySDNNDataType
   String get id => 'heart_rate_variability_sdnn';
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

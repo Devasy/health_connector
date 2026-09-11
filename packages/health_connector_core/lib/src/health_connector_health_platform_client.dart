@@ -7,6 +7,7 @@ import 'package:health_connector_core/src/models/health_data_sync/health_data_sy
 import 'package:health_connector_core/src/models/health_data_types/health_data_type.dart';
 import 'package:health_connector_core/src/models/health_records/health_record.dart';
 import 'package:health_connector_core/src/models/measurement_units/measurement_unit.dart';
+import 'package:health_connector_core/src/models/operating_system_info/operating_system_info.dart';
 import 'package:health_connector_core/src/models/permissions/permission.dart';
 import 'package:health_connector_core/src/models/requests/aggregate_requests/aggregate_request.dart';
 import 'package:health_connector_core/src/models/requests/delete_requests/delete_records_request.dart';
@@ -23,6 +24,10 @@ import 'package:health_connector_core/src/models/responses/read_records_response
 @sinceV1_0_0
 @internalUse
 abstract interface class HealthConnectorPlatformClient {
+  /// Device operating-system facts captured during client initialization.
+  @sinceV3_11_0
+  OperatingSystemInfo get operatingSystemInfo;
+
   /// The configuration used by this client.
   @sinceV2_0_0
   HealthConnectorConfig get config;
@@ -173,7 +178,6 @@ abstract interface class HealthConnectorPlatformClient {
   ///   - The platform request fails
   ///   - The record ID is invalid or doesn't exist
   ///   - Required permissions are not granted
-  @supportedOnHealthConnect
   Future<void> updateRecord<R extends HealthRecord>(R record);
 
   /// Updates multiple health records on the platform.
@@ -191,7 +195,6 @@ abstract interface class HealthConnectorPlatformClient {
   ///   - The platform request fails
   ///   - The record ID is invalid or doesn't exist
   ///   - Required permissions are not granted
-  @supportedOnHealthConnect
   Future<void> updateRecords<R extends HealthRecord>(List<R> records);
 
   /// Performs an aggregation query over health records.
@@ -319,11 +322,4 @@ abstract interface class HealthConnectorPlatformClient {
   /// - [HealthConnectorException] if the platform request fails
   @sinceV3_8_0
   Future<ExerciseRoute?> readExerciseRoute(HealthRecordId exerciseSessionId);
-
-  /// Whether this device can persist [ExerciseSessionSegmentEvent.weight].
-  ///
-  /// Health Connect requires SDK Extension 21 for segment weights; HealthKit
-  /// has no equivalent field and always reports false.
-  @sinceV3_10_0
-  Future<bool> isExerciseSegmentWeightSupported();
 }

@@ -47,7 +47,10 @@ final class ExerciseSessionFormState
       SearchableDropdownMenuFormField<ExerciseType>(
         labelText: AppTexts.exerciseType,
         values: ExerciseType.values
-            .where((type) => type.isSupportedOnPlatform(widget.healthPlatform))
+            .where(
+              (type) => type.healthPlatformRequirements.supportedHealthPlatforms
+                  .contains(widget.healthPlatform),
+            )
             .toList(),
         initialValue: exerciseType,
         onChanged: (type) => setState(() => exerciseType = type),

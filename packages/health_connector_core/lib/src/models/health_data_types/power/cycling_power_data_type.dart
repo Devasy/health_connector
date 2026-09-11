@@ -19,7 +19,6 @@ part of '../health_data_type.dart';
 /// - Deletable: Delete records by IDs or time range
 ///
 @sinceV2_0_0
-@supportedOnAppleHealthIOS17Plus
 @immutable
 final class CyclingPowerDataType
     extends HealthDataType<CyclingPowerRecord, Power>
@@ -43,8 +42,8 @@ final class CyclingPowerDataType
   String get id => 'cycling_power';
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.ios17OrLater,
   ];
 
   @override

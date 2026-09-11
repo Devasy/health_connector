@@ -52,7 +52,6 @@ part of '../health_data_type.dart';
 /// - [WalkingHeartRateAverageRecord]
 ///
 @sinceV3_4_0
-@supportedOnAppleHealth
 @readOnly
 @immutable
 final class WalkingHeartRateAverageDataType
@@ -71,8 +70,8 @@ final class WalkingHeartRateAverageDataType
   const WalkingHeartRateAverageDataType();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

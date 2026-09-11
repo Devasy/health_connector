@@ -21,7 +21,6 @@ part of '../health_data_type.dart';
 /// - [ActiveEnergyBurnedRecord]
 ///
 @sinceV2_2_0
-@supportedOnAppleHealth
 @immutable
 final class BasalEnergyBurnedDataType
     extends HealthDataType<BasalEnergyBurnedRecord, Energy>
@@ -51,8 +50,8 @@ final class BasalEnergyBurnedDataType
   int get hashCode => runtimeType.hashCode;
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

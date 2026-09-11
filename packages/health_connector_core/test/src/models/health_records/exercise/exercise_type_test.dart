@@ -13,6 +13,32 @@ const _universalSegments = [
 void main() {
   group('ExerciseType', () {
     group('platform support', () {
+      test('enum values store their platform requirements', () {
+        expect(
+          ExerciseType.running.healthPlatformRequirements,
+          HealthPlatformRequirement.allPlatformsWithoutRequirements,
+        );
+        expect(
+          ExerciseType.runningTreadmill.healthPlatformRequirements,
+          const [HealthConnectRequirement.none],
+        );
+        expect(
+          ExerciseType.swimming.healthPlatformRequirements,
+          const [AppleHealthRequirement.none],
+        );
+        expect(
+          ExerciseType.transition.healthPlatformRequirements,
+          const [AppleHealthRequirement.ios16OrLater],
+        );
+        expect(
+          ExerciseType.diving.healthPlatformRequirements,
+          const [
+            AppleHealthRequirement.ios17OrLater,
+            HealthConnectRequirement.none,
+          ],
+        );
+      });
+
       parameterizedTest(
         'getExerciseTypesForPlatform returns only valid exercise types',
         [
@@ -64,6 +90,30 @@ void main() {
         );
         expect(intersection, isEmpty);
       });
+
+      parameterizedTest(
+        'cycling environment types are supported on both platforms',
+        [
+          [ExerciseType.cycling],
+          [ExerciseType.cyclingStationary],
+        ],
+        (ExerciseType type) {
+          expect(
+            type.healthPlatformRequirements.any(
+              (requirement) =>
+                  requirement.healthPlatform == HealthPlatform.appleHealth,
+            ),
+            isTrue,
+          );
+          expect(
+            type.healthPlatformRequirements.any(
+              (requirement) =>
+                  requirement.healthPlatform == HealthPlatform.healthConnect,
+            ),
+            isTrue,
+          );
+        },
+      );
 
       test('every ExerciseType is in at most one platform-only list', () {
         final appleOnly = ExerciseType.other.getExerciseTypesForPlatform(

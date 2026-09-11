@@ -13,7 +13,6 @@ part of '../health_data_type.dart';
 /// - [StairDescentSpeedDataType]
 ///
 @sinceV2_0_0
-@supportedOnAppleHealth
 @immutable
 sealed class SpeedActivityDataType<R extends SpeedActivityRecord>
     extends HealthDataType<R, Velocity>
@@ -28,8 +27,8 @@ sealed class SpeedActivityDataType<R extends SpeedActivityRecord>
   const SpeedActivityDataType();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

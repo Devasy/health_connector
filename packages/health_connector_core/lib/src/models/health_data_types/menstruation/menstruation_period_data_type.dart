@@ -48,7 +48,6 @@ part of '../health_data_type.dart';
 /// - [MenstruationPeriodRecord]
 ///
 @sinceV3_6_0
-@supportedOnHealthConnect
 @immutable
 final class MenstruationPeriodDataType
     extends HealthDataType<MenstruationPeriodRecord, MeasurementUnit>
@@ -77,8 +76,8 @@ final class MenstruationPeriodDataType
   int get hashCode => runtimeType.hashCode;
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.healthConnect,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    HealthConnectRequirement.none,
   ];
 
   @override

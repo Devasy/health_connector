@@ -22,7 +22,6 @@ part of 'health_data_type.dart';
 /// - [ForcedExpiratoryVolumeRecord]
 ///
 @sinceV3_4_0
-@supportedOnAppleHealth
 @immutable
 final class ForcedExpiratoryVolumeDataType
     extends HealthDataType<ForcedExpiratoryVolumeRecord, Volume>
@@ -40,8 +39,8 @@ final class ForcedExpiratoryVolumeDataType
   const ForcedExpiratoryVolumeDataType();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

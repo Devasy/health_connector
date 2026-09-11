@@ -20,7 +20,6 @@ part of 'health_data_type.dart';
 /// - [NumberOfTimesFallenRecord]
 ///
 @sinceV3_5_0
-@supportedOnAppleHealth
 @immutable
 final class NumberOfTimesFallenDataType
     extends HealthDataType<NumberOfTimesFallenRecord, Number>
@@ -36,8 +35,8 @@ final class NumberOfTimesFallenDataType
   const NumberOfTimesFallenDataType();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

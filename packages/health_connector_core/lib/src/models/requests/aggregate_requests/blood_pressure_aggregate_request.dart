@@ -7,11 +7,11 @@ part of 'aggregate_request.dart';
 /// (systolic or diastolic) being aggregated.
 ///
 @sinceV1_2_0
-@supportedOnHealthConnect
 @internalUse
 @immutable
 final class BloodPressureAggregateRequest extends AggregateRequest<Pressure> {
-  static const _bloodPressureDataTypes = [
+  static const List<HealthDataType<HealthRecord, Pressure>>
+  _bloodPressureDataTypes = [
     HealthDataType.diastolicBloodPressure,
     HealthDataType.systolicBloodPressure,
   ];
@@ -38,7 +38,9 @@ final class BloodPressureAggregateRequest extends AggregateRequest<Pressure> {
     required super.endTime,
   }) {
     require(
-      condition: _bloodPressureDataTypes.contains(dataType),
+      condition: _bloodPressureDataTypes.any(
+        (bloodPressureDataType) => identical(bloodPressureDataType, dataType),
+      ),
       value: dataType,
       name: 'dataType',
       message:

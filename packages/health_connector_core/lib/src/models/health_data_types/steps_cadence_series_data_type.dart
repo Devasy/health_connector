@@ -21,7 +21,6 @@ part of 'health_data_type.dart';
 /// - [StepsCadenceSeriesRecord]
 ///
 @sinceV3_1_0
-@supportedOnHealthConnect
 final class StepsCadenceSeriesDataType
     extends HealthDataType<StepsCadenceSeriesRecord, Frequency>
     implements
@@ -53,8 +52,8 @@ final class StepsCadenceSeriesDataType
   ];
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.healthConnect,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    HealthConnectRequirement.none,
   ];
 
   @override

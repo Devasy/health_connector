@@ -25,7 +25,6 @@ part of '../health_data_type.dart';
 /// - [CyclingPedalingCadenceSeriesRecord]
 ///
 @sinceV2_2_0
-@supportedOnHealthConnect
 @immutable
 final class CyclingPedalingCadenceSeriesDataType
     extends HealthDataType<CyclingPedalingCadenceSeriesRecord, Frequency>
@@ -66,8 +65,8 @@ final class CyclingPedalingCadenceSeriesDataType
   ];
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.healthConnect,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    HealthConnectRequirement.none,
   ];
 
   @override

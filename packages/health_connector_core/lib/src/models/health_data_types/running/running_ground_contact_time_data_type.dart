@@ -54,7 +54,6 @@ part of '../health_data_type.dart';
 /// - [RunningGroundContactTimeRecord]
 ///
 @sinceV3_5_0
-@supportedOnAppleHealthIOS16Plus
 @immutable
 final class RunningGroundContactTimeDataType
     extends HealthDataType<RunningGroundContactTimeRecord, TimeDuration>
@@ -72,8 +71,8 @@ final class RunningGroundContactTimeDataType
   const RunningGroundContactTimeDataType();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.ios16OrLater,
   ];
 
   @override

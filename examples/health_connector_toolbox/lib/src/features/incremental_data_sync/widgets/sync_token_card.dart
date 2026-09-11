@@ -35,7 +35,8 @@ class SyncTokenCard extends StatelessWidget {
           HealthDataType.steps,
           HealthDataType.weight,
         ].where((dt) {
-          return dt.supportedHealthPlatforms.contains(healthPlatform);
+          return dt.healthPlatformRequirements.supportedHealthPlatforms
+              .contains(healthPlatform);
         }).toList();
 
     return Selector<IncrementalDataSyncChangeNotifier, HealthDataSyncToken?>(

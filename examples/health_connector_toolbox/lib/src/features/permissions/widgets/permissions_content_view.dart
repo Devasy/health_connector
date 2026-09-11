@@ -3,6 +3,7 @@ import 'package:health_connector/health_connector_internal.dart'
     show
         ExerciseRoutePermission,
         HealthConnector,
+        HealthConnectorPlatformSupport,
         HealthDataPermission,
         HealthDataType,
         HealthDataTypeCategory,
@@ -174,9 +175,11 @@ final class PermissionsContentView extends StatelessWidget {
           (dataType) => dataType.permissions.whereType<HealthDataPermission>(),
         )
         .where(
-          (permission) => permission.supportedHealthPlatforms.contains(
-            healthConnector.healthPlatform,
-          ),
+          (permission) => healthConnector
+              .getSupportStatusFor(
+                permission.dataType.healthPlatformRequirements,
+              )
+              .isSupported,
         )
         .toList();
 

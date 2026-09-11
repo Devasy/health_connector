@@ -1,6 +1,6 @@
 import 'package:health_connector_core/src/annotations/annotations.dart';
 import 'package:health_connector_core/src/models/health_platform.dart';
-import 'package:health_connector_core/src/models/health_platform_data.dart';
+import 'package:health_connector_core/src/models/health_platform_requirements/health_platform_requirement.dart';
 import 'package:health_connector_core/src/models/permissions/permission.dart';
 import 'package:meta/meta.dart' show immutable;
 
@@ -11,7 +11,7 @@ part 'read_health_data_in_background_feature.dart';
 /// that may or may not be available on a given device or platform version.
 @sinceV1_0_0
 @immutable
-sealed class HealthPlatformFeature implements HealthPlatformData {
+sealed class HealthPlatformFeature {
   @internalUse
   const HealthPlatformFeature();
 
@@ -19,8 +19,18 @@ sealed class HealthPlatformFeature implements HealthPlatformData {
   HealthPlatformFeaturePermission get permission =>
       HealthPlatformFeaturePermission(this);
 
-  @override
-  List<HealthPlatform> get supportedHealthPlatforms => HealthPlatform.values;
+  /// Requirements for each platform that supports this feature.
+  @sinceV3_11_0
+  List<HealthPlatformRequirement> get healthPlatformRequirements =>
+      HealthPlatformRequirement.allPlatformsWithoutRequirements;
+
+  /// The health platforms that support this feature.
+  @Deprecated(
+    'Use healthPlatformRequirements.supportedHealthPlatforms instead. '
+    'Will be removed in 4.0.0.',
+  )
+  List<HealthPlatform> get supportedHealthPlatforms =>
+      healthPlatformRequirements.supportedHealthPlatforms;
 
   /// Historical health data reading capability.
   ///

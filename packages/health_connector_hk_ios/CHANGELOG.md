@@ -1,3 +1,14 @@
+## 3.9.5
+
+- **FEAT**: Return the current iOS version snapshot during connector
+  initialization
+  ([#223](https://github.com/fam-tung-lam/health_connector/pull/223)).
+- **FIX**: Distinguish indoor and outdoor cycling workouts using
+  `HKMetadataKeyIndoorWorkout`. Missing, invalid, or `false` metadata maps to
+  `ExerciseType.cycling`; `true` maps to `ExerciseType.cyclingStationary`
+  ([#218](https://github.com/fam-tung-lam/health_connector/issues/218),
+  [e5e0796d](https://github.com/fam-tung-lam/health_connector/commit/e5e0796d4de3c4850785d7e7ec29d9748414fdd7)).
+
 ## 3.9.4
 
 - **FIX**: Declare that the iOS plugin does not collect HealthKit data in its privacy manifest. ([b47453f1](https://github.com/fam-tung-lam/health_connector/commit/b47453f1f88577ef76b061156abcb14597a6f18a))

@@ -28,13 +28,8 @@ import 'package:meta/meta_meta.dart' show TargetKind, Target;
 /// **Used by**: `@internalUse`, `@experimentalApi`, `@Since`, `@readOnly`
 ///
 /// ### `memberAndTypeTargets`
-/// Restricted to type declarations and their members:
-/// - Classes, enums
-/// - Methods, fields
-/// - Enum values
-/// - Parameters
-///
-/// **Used by**: `@supportedOn`
+/// Restricted to type declarations and their members. Used by the deprecated
+/// platform-support annotations.
 ///
 /// ## Example
 ///
@@ -80,10 +75,6 @@ const allTargets = Target({
 });
 
 /// Target set for type declarations and their members only.
-///
-/// Used by annotations that apply to types and their members but not to
-/// standalone functions, libraries, or other top-level constructs:
-/// - `@supportedOn`: Restricts platform-specific types and methods
 @internal
 const memberAndTypeTargets = Target({
   TargetKind.classType,

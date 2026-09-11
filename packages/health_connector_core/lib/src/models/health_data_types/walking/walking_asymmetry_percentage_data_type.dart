@@ -49,7 +49,6 @@ part of '../health_data_type.dart';
 /// ```
 ///
 @sinceV3_2_0
-@supportedOnAppleHealth
 @readOnly
 @immutable
 final class WalkingAsymmetryPercentageDataType
@@ -68,8 +67,8 @@ final class WalkingAsymmetryPercentageDataType
   const WalkingAsymmetryPercentageDataType();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

@@ -7,8 +7,8 @@ part of '../health_data_type.dart';
 ///
 /// ## Platform Availability
 ///
-/// **These data types are ONLY supported on iOS/HealthKit.** They are marked
-/// with `@supportedOnAppleHealth` and will not compile when targeting Android.
+/// **These data types are ONLY supported on iOS/HealthKit.** Their
+/// [healthPlatformRequirements] contain only an [AppleHealthRequirement].
 ///
 /// For cross-platform distance tracking, use [DistanceDataType].
 ///
@@ -25,7 +25,6 @@ part of '../health_data_type.dart';
 /// - [SixMinuteWalkTestDistanceDataType]
 ///
 @sinceV2_0_0
-@supportedOnAppleHealth
 @immutable
 sealed class DistanceActivityDataType<R extends DistanceActivityRecord>
     extends HealthDataType<R, Length>
@@ -41,8 +40,8 @@ sealed class DistanceActivityDataType<R extends DistanceActivityRecord>
   const DistanceActivityDataType();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

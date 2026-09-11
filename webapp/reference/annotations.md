@@ -1,73 +1,54 @@
 # Annotations
 
-The SDK uses annotations to state platform support, OS-version floors, and usage constraints directly on the API. Reading them correctly is how you avoid shipping a call that throws on half your users' devices.
+The SDK uses annotations for API lifecycle and usage constraints. Platform and
+OS-version support is represented at runtime by `healthPlatformRequirements`.
 
 ## The vocabulary
 
 | Annotation | Means | What to do |
 |---|---|---|
-| `@supportedOnHealthConnect` | Android Health Connect only | Check `HealthConnector.healthPlatform`, or catch `UnsupportedOperationException` |
-| `@supportedOnAppleHealth` | iOS HealthKit only | Same |
-| `@supportedOnAppleHealthIOS16Plus` | iOS 16.0+ only | Check platform **and** OS version; throws below iOS 16 |
-| `@supportedOnAppleHealthIOS17Plus` | iOS 17.0+ only | Throws below iOS 17 |
-| `@supportedOnAppleHealthIOS18Plus` | iOS 18.0+ only | Throws below iOS 18 |
-| `@supportedOnHealthConnectSdkExtension21` | Health Connect SDK Extension 21+ | Runtime device check — see [below](#exercise-segment-weight-and-sdk-extension-21) |
 | `@readOnly` | System-calculated metric | Use `readRecords()` or `aggregate()` only; writing throws |
 | `@internalUse` | Not part of the public API | Do not call from application code |
+| `@experimentalApi` | API may change before stabilization | Review release notes before upgrading |
+| `@sinceV…` | Release that introduced the API | Use it to confirm the minimum SDK version |
 
-::: info Annotations combine
-When several appear on one declaration, every constraint applies at once.
-:::
+## Deprecated platform annotations
 
-## Worked example
+The legacy `supportedOn…` annotations remain in the internal core library for
+compatibility and are deprecated for removal in 4.0.0. Do not add new usages.
 
-```dart
-@supportedOnAppleHealthIOS16Plus
-@readOnly
-final class InfrequentMenstrualCycleEventRecord extends IntervalHealthRecord {
-  @internalUse
-  factory InfrequentMenstrualCycleEventRecord.internal({...}) {...}
-}
-```
+| Deprecated annotation | Runtime replacement |
+|---|---|
+| `supportedOnHealthConnect` | `HealthConnectRequirement.none` |
+| `supportedOnHealthConnectSdkExtension21` | `HealthConnectRequirement.android14OrLaterWithSDKExtension21` |
+| `supportedOnAppleHealth` | `AppleHealthRequirement.none` |
+| `supportedOnAppleHealthIOS16Plus` | `AppleHealthRequirement.ios16OrLater` |
+| `supportedOnAppleHealthIOS17Plus` | `AppleHealthRequirement.ios17OrLater` |
+| `supportedOnAppleHealthIOS18Plus` | `AppleHealthRequirement.ios18OrLater` |
 
-Read that as three separate facts:
-
-- **`@supportedOnAppleHealthIOS16Plus`** — iOS 16 or later only. Android and iOS 15 throw `UnsupportedOperationException`.
-- **`@readOnly`** — HealthKit calculates this; you can read it, never write or delete it.
-- **`@internalUse`** on the factory — that constructor exists for the SDK's own mappers.
-
-Correct usage:
+Platform availability is queryable before an operation:
 
 ```dart
-final connector = await HealthConnector.create();
-
-try {
-  // Recommended: Read-only types support reads and aggregates.
-  final now = DateTime.now();
-  final response = await connector.readRecords(
-    HealthDataType.infrequentMenstrualCycleEvent.readInTimeRange(
-      startTime: now.subtract(const Duration(days: 1)),
-      endTime: now,
-    ),
-  );
-
-  // Avoid: Never call an @internalUse factory.
-  // final record = InfrequentMenstrualCycleEventRecord.internal(...);
-
-  // Avoid: Never write a @readOnly type — throws UnsupportedOperationException.
-  // await connector.writeRecord(record);
-} on UnsupportedOperationException catch (e) {
-  print('This type requires iOS 16 or later: $e');
-}
+final status = connector.getSupportStatusFor(
+  HealthDataType.infrequentMenstrualCycleEvent.healthPlatformRequirements,
+);
+if (!status.isSupported) return;
 ```
 
-::: tip Lint rules are planned
-A future `health_connector_lint` release will surface these annotations through the Dart analyzer, so the constraints become analyzer warnings instead of documentation you have to remember.
-:::
+The requirement list is the single source of truth. It identifies supported
+platforms and any minimum iOS, Android API, or Health Connect SDK Extension
+version. See [Runtime requirements](/reference/requirements#runtime-availability).
 
 ## Exercise segment weight, set index, and RPE (SDK Extension 21) {#exercise-segment-weight-and-sdk-extension-21}
 
-`ExerciseSessionSegmentEvent.weight`, `.setIndex`, and `.rateOfPerceivedExertion` are all annotated `@supportedOnHealthConnectSdkExtension21`. They map to [`ExerciseSegment.weight`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/ExerciseSegment#weight), [`ExerciseSegment.setIndex`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/ExerciseSegment#setIndex), and [`ExerciseSegment.rateOfPerceivedExertion`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/ExerciseSegment#rateOfPerceivedExertion) respectively, all of which only exist on devices whose Health Connect Mainline module is at **SDK Extension 21 or higher**.
+`ExerciseSessionSegmentEvent.weight`, `.setIndex`, and
+`.rateOfPerceivedExertion` map to
+[`ExerciseSegment.weight`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/ExerciseSegment#weight),
+[`ExerciseSegment.setIndex`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/ExerciseSegment#setIndex),
+and
+[`ExerciseSegment.rateOfPerceivedExertion`](https://developer.android.com/reference/kotlin/androidx/health/connect/client/records/ExerciseSegment#rateOfPerceivedExertion),
+respectively. All three require a device whose Health Connect Mainline module is
+at **SDK Extension 21 or higher**.
 
 | Scenario | Writing a non-null value | Value when read |
 |---|---|---|
@@ -76,10 +57,13 @@ A future `health_connector_lint` release will surface these annotations through 
 | Android below 14 | Throws `UnsupportedOperationException` | `null` |
 | iOS HealthKit | Throws `UnsupportedOperationException` | `null` |
 
-Ask first, so you can adapt instead of racing the exception:
+Check the extended-fields requirements before adding any of these fields:
 
 ```dart
-final supportsExtendedFields = await connector.isExerciseSegmentWeightSupported();
+final status = connector.getSupportStatusFor(
+  ExerciseSessionSegmentEvent.extendedFieldsRequirements,
+);
+final supportsExtendedFields = status.isSupported;
 
 final segment = ExerciseSessionSegmentEvent(
   startTime: startTime,
@@ -100,12 +84,17 @@ try {
 ```
 
 ::: danger This is a runtime check, not a compile-time one
-`compileSdkExtension 19` in your Gradle config satisfies the **build**. The Extension 21 requirement is checked on the **device**. The same app binary succeeds on one Android 14 phone and throws on another, depending on whether that phone received the Mainline update — so you cannot test this away on a single device. `isExerciseSegmentWeightSupported()` is a strong signal, not a guarantee against every edge case, since it is evaluated once and cached at client creation.
+`compileSdkExtension 19` in your Gradle config satisfies the **build**. The
+Extension 21 requirement is checked on the **device**. The same app binary
+succeeds on one Android 14 phone and throws on another, depending on whether
+that phone received the Mainline update. Use `getSupportStatusFor()` to check
+the immutable operating-system snapshot captured when the connector is created,
+and retain an unsupported-operation fallback.
 :::
 
 <NextSteps
   :links="[
-    { text: 'Platform differences', link: '/guide/concepts/platform-differences', description: 'Every divergence these annotations describe.' },
+    { text: 'Platform differences', link: '/guide/concepts/platform-differences', description: 'Behavior that differs between health stores.' },
     { text: 'Handle errors', link: '/guide/tasks/errors', description: 'Catching UnsupportedOperationException as a branch.' },
     { text: 'Health data types', link: '/reference/health-data-types', description: 'Per-type platform availability.' },
   ]"

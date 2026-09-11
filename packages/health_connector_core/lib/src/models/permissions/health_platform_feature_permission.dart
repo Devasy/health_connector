@@ -18,9 +18,13 @@ final class HealthPlatformFeaturePermission extends Permission {
   /// This specifies which platform capability requires authorization.
   final HealthPlatformFeature feature;
 
-  @override
+  /// The health platforms that support [feature].
+  @Deprecated(
+    'Use feature.healthPlatformRequirements.supportedHealthPlatforms instead. '
+    'Will be removed in 4.0.0.',
+  )
   List<HealthPlatform> get supportedHealthPlatforms =>
-      feature.supportedHealthPlatforms;
+      feature.healthPlatformRequirements.supportedHealthPlatforms;
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

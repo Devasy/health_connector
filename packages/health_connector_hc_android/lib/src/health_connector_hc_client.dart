@@ -10,6 +10,7 @@ import 'package:health_connector_hc_android/src/mappers/health_platform_feature_
 import 'package:health_connector_hc_android/src/mappers/health_record_mappers/exercise/exercise_route_mapper.dart';
 import 'package:health_connector_hc_android/src/mappers/health_record_mappers/health_record_id_mapper.dart';
 import 'package:health_connector_hc_android/src/mappers/health_record_mappers/health_record_mapper.dart';
+import 'package:health_connector_hc_android/src/mappers/operating_system_info_mapper.dart';
 import 'package:health_connector_hc_android/src/mappers/permission_mappers/permission_mapper.dart';
 import 'package:health_connector_hc_android/src/mappers/permission_mappers/permission_status_mapper.dart';
 import 'package:health_connector_hc_android/src/mappers/permission_mappers/permissions_list_mapper.dart';
@@ -62,9 +63,14 @@ class HealthConnectorHCClient implements HealthConnectorPlatformClient {
       HealthConnectorHCNativeLogApi.init();
     }
 
-    await _platformClient.initialize(config.toDto());
+    final operatingSystemInfoDto = await _platformClient.initialize(
+      config.toDto(),
+    );
 
-    return HealthConnectorHCClient._(config);
+    return HealthConnectorHCClient._(
+      config,
+      operatingSystemInfoDto.toDomain(),
+    );
   }
 
   /// All nutrient health data types that share the same permission as
@@ -225,9 +231,13 @@ class HealthConnectorHCClient implements HealthConnectorPlatformClient {
     }
   }
 
-  const HealthConnectorHCClient._(this._config);
+  const HealthConnectorHCClient._(this._config, this.operatingSystemInfo);
 
   final HealthConnectorConfig _config;
+
+  @sinceV3_11_0
+  @override
+  final AndroidOperatingSystemInfo operatingSystemInfo;
 
   @override
   HealthConnectorConfig get config => _config;
@@ -1073,55 +1083,6 @@ class HealthConnectorHCClient implements HealthConnectorPlatformClient {
       throw HealthConnectorException.fromCode(
         e.code.toErrorCode(),
         'Failed to read exercise route: ${e.message ?? 'Unknown error'}',
-        cause: e,
-        stackTrace: st,
-      );
-    }
-  }
-
-  /// Queries the native platform to determine whether the device can persist
-  /// [ExerciseSessionSegmentEvent.weight].
-  ///
-  /// ## Returns
-  ///
-  /// `true` if the device's Health Connect Mainline module is at SDK
-  /// Extension 21 or higher, `false` otherwise.
-  ///
-  /// ## Throws
-  ///
-  /// - [HealthConnectorException] if the platform request fails
-  @override
-  Future<bool> isExerciseSegmentWeightSupported() async {
-    HealthConnectorLogger.debug(
-      tag,
-      operation: 'isExerciseSegmentWeightSupported',
-      message: 'Checking exercise segment weight support',
-    );
-
-    try {
-      final result = await _platformClient.isExerciseSegmentWeightSupported();
-
-      HealthConnectorLogger.info(
-        tag,
-        operation: 'isExerciseSegmentWeightSupported',
-        message: 'Exercise segment weight support checked',
-        context: {'result': result},
-      );
-
-      return result;
-    } on PlatformException catch (e, st) {
-      HealthConnectorLogger.error(
-        tag,
-        operation: 'isExerciseSegmentWeightSupported',
-        message: 'Failed to check exercise segment weight support',
-        exception: e,
-        stackTrace: st,
-      );
-
-      throw HealthConnectorException.fromCode(
-        e.code.toErrorCode(),
-        'Failed to check exercise segment weight support: '
-        '${e.message ?? 'Unknown error'}',
         cause: e,
         stackTrace: st,
       );

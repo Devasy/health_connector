@@ -22,7 +22,6 @@ part of 'health_data_type.dart';
 /// - [InsulinDeliveryRecord]
 ///
 @sinceV3_5_0
-@supportedOnAppleHealth
 @immutable
 final class InsulinDeliveryDataType
     extends HealthDataType<InsulinDeliveryRecord, Number>
@@ -41,8 +40,8 @@ final class InsulinDeliveryDataType
   const InsulinDeliveryDataType();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

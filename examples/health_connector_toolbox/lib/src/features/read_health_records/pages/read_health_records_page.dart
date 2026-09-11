@@ -238,10 +238,10 @@ class _ReadHealthRecordsPageState extends State<ReadHealthRecordsPage>
                               validator: _validateDataType,
                               items: HealthDataType.values
                                   .where(
-                                    (type) =>
-                                        type.supportedHealthPlatforms.contains(
-                                          widget.healthPlatform,
-                                        ),
+                                    (type) => type
+                                        .healthPlatformRequirements
+                                        .supportedHealthPlatforms
+                                        .contains(widget.healthPlatform),
                                   )
                                   .toList(),
                             ),

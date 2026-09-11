@@ -18,7 +18,9 @@ The SDK makes the common path uniform. This page lists everywhere it deliberatel
 
 ## Records are immutable on iOS
 
-HealthKit has no update operation. `updateRecord()` and `updateRecords()` are annotated `@supportedOnHealthConnect` and throw `UnsupportedOperationException` on iOS.
+HealthKit has no update operation. `updateRecord()` and `updateRecords()` are
+available only on Health Connect and throw `UnsupportedOperationException` on
+iOS.
 
 The workaround is delete plus re-create, which **changes the record's ID**. If your backend stores health record IDs as foreign keys, that reassignment has to be handled. See [Update records](/guide/tasks/update).
 
@@ -46,7 +48,16 @@ By default Health Connect only exposes the last 30 days of data. Older records r
 
 Health Connect is an updatable app whose capabilities depend on its version and on the device's Mainline module level. iOS features are part of the OS, so `getFeatureStatus()` returns `available` and feature permissions return `granted` on iOS by default.
 
-Always check before relying on an optional capability:
+Check platform and OS requirements before relying on a capability:
+
+```dart
+final support = connector.getSupportStatusFor(
+  ExerciseSessionSegmentEvent.extendedFieldsRequirements,
+);
+```
+
+Platform features also have a native availability state, so check that
+separately:
 
 ```dart
 final status = await connector.getFeatureStatus(
@@ -54,7 +65,13 @@ final status = await connector.getFeatureStatus(
 );
 ```
 
-The sharpest version of this is `ExerciseSessionSegmentEvent.weight`, `.setIndex`, and `.rateOfPerceivedExertion`, which all require the device's Health Connect Mainline module to be at SDK Extension 21. The same app binary succeeds on one Android 14 device and throws on another — call `HealthConnector.isExerciseSegmentWeightSupported()` to check ahead of time instead of relying solely on the exception. [Details](/reference/annotations#exercise-segment-weight-and-sdk-extension-21).
+The sharpest version of this is `ExerciseSessionSegmentEvent.weight`,
+`.setIndex`, and `.rateOfPerceivedExertion`, which all require the device's
+Health Connect Mainline module to be at SDK Extension 21. The same app binary
+succeeds on one Android 14 device and throws on another. Pass
+`ExerciseSessionSegmentEvent.extendedFieldsRequirements` to
+`getSupportStatusFor()` before adding these fields.
+[Details](/reference/annotations#exercise-segment-weight-and-sdk-extension-21).
 
 ## Data types do not map one to one
 
@@ -70,7 +87,8 @@ Check availability per type in the [data type explorer](/reference/health-data-t
 
 - Treat "no data" and "no permission" as the same UI state.
 - Never store a health record ID as a durable key without an iOS re-creation strategy.
-- Check `getFeatureStatus()` for anything optional, and keep a fallback path.
+- Pass `healthPlatformRequirements` to `getSupportStatusFor()` and keep a fallback path.
+- Check `getFeatureStatus()` as well when the capability is a platform feature.
 - Branch on `HealthConnector.healthPlatform` only for genuinely platform-specific features; everything else should be shared code.
 
 <NextSteps

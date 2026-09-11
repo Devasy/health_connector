@@ -24,7 +24,6 @@ part of 'health_data_type.dart';
 /// - [BodyMassIndexRecord]
 ///
 @sinceV2_2_0
-@supportedOnAppleHealth
 @immutable
 final class BodyMassIndexDataType
     extends HealthDataType<BodyMassIndexRecord, Number>
@@ -49,8 +48,8 @@ final class BodyMassIndexDataType
   String get id => 'body_mass_index';
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

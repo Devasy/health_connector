@@ -29,7 +29,6 @@ part of '../health_data_type.dart';
 /// - [HighHeartRateEventRecord]
 ///
 @sinceV3_3_0
-@supportedOnAppleHealth
 @readOnly
 @immutable
 final class IrregularHeartRhythmEventDataType
@@ -48,8 +47,8 @@ final class IrregularHeartRhythmEventDataType
   String get id => 'irregular_heart_rhythm_event';
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

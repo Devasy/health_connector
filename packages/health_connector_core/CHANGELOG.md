@@ -1,3 +1,21 @@
+## 3.9.4
+
+- **FEAT**: Add runtime platform requirement, support status, and immutable
+  operating-system information models
+  ([#223](https://github.com/fam-tung-lam/health_connector/pull/223)).
+- **FEAT**: Expose `healthPlatformRequirements` on health data types, exercise
+  types, exercise events, and platform features
+  ([#223](https://github.com/fam-tung-lam/health_connector/pull/223)).
+- **DEPRECATED**: Replace platform-only support projections and legacy
+  `supportedOn…` annotations with runtime requirements. Deprecated APIs remain
+  available until 4.0.0
+  ([#223](https://github.com/fam-tung-lam/health_connector/pull/223)).
+- **FIX**: Define `ExerciseType.cycling` as outdoor cycling and
+  `ExerciseType.cyclingStationary` as indoor cycling, with both types supported
+  on HealthKit and Health Connect
+  ([#218](https://github.com/fam-tung-lam/health_connector/issues/218),
+  [e5e0796d](https://github.com/fam-tung-lam/health_connector/commit/e5e0796d4de3c4850785d7e7ec29d9748414fdd7)).
+
 ## 3.9.3
 
 - **CHORE**: Migrate the package from the Apache 2.0 License to the MIT License.

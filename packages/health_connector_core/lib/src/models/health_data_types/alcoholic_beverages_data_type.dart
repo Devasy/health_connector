@@ -22,7 +22,6 @@ part of 'health_data_type.dart';
 /// - [AlcoholicBeveragesRecord]
 ///
 @sinceV3_1_0
-@supportedOnAppleHealth
 @immutable
 final class AlcoholicBeveragesDataType
     extends HealthDataType<AlcoholicBeveragesRecord, Number>
@@ -41,8 +40,8 @@ final class AlcoholicBeveragesDataType
   const AlcoholicBeveragesDataType();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override

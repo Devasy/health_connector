@@ -145,6 +145,10 @@ final class _SupportedOn {
 
 /// Convenience annotation for APIs supported only on Android Health Connect.
 ///
+@Deprecated(
+  'Use HealthConnectRequirement.none in healthPlatformRequirements instead. '
+  'Will be removed in 4.0.0.',
+)
 @internalUse
 const supportedOnHealthConnect = _SupportedOn(
   platform: HealthPlatform.healthConnect,
@@ -171,6 +175,12 @@ const supportedOnHealthConnect = _SupportedOn(
 /// - Health Connect SDK Extension versioning:
 ///   <https://developer.android.com/health-and-fitness/guides/health-connect/plan/sdk-extensions>
 ///
+@Deprecated(
+  'Use '
+  'HealthConnectRequirement.android14OrLaterWithSDKExtension21 '
+  'in healthPlatformRequirements '
+  'instead. Will be removed in 4.0.0.',
+)
 @sinceV3_9_0
 @internalUse
 const supportedOnHealthConnectSdkExtension21 = _SupportedOn(
@@ -180,6 +190,10 @@ const supportedOnHealthConnectSdkExtension21 = _SupportedOn(
 
 /// Convenience annotation for APIs supported only on iOS HealthKit.
 ///
+@Deprecated(
+  'Use AppleHealthRequirement.none in healthPlatformRequirements instead. '
+  'Will be removed in 4.0.0.',
+)
 @internalUse
 const supportedOnAppleHealth = _SupportedOn(
   platform: HealthPlatform.appleHealth,
@@ -187,6 +201,11 @@ const supportedOnAppleHealth = _SupportedOn(
 
 /// Convenience annotation for APIs supported only on iOS 16+.
 ///
+@Deprecated(
+  'Use AppleHealthRequirement.ios16OrLater in '
+  'healthPlatformRequirements instead. '
+  'Will be removed in 4.0.0.',
+)
 @internalUse
 const supportedOnAppleHealthIOS16Plus = _SupportedOn(
   platform: HealthPlatform.appleHealth,
@@ -195,6 +214,11 @@ const supportedOnAppleHealthIOS16Plus = _SupportedOn(
 
 /// Convenience annotation for APIs supported only on iOS 17+.
 ///
+@Deprecated(
+  'Use AppleHealthRequirement.ios17OrLater in '
+  'healthPlatformRequirements instead. '
+  'Will be removed in 4.0.0.',
+)
 @internalUse
 const supportedOnAppleHealthIOS17Plus = _SupportedOn(
   platform: HealthPlatform.appleHealth,
@@ -203,6 +227,11 @@ const supportedOnAppleHealthIOS17Plus = _SupportedOn(
 
 /// Convenience annotation for APIs supported only on iOS 18+.
 ///
+@Deprecated(
+  'Use AppleHealthRequirement.ios18OrLater in '
+  'healthPlatformRequirements instead. '
+  'Will be removed in 4.0.0.',
+)
 @internalUse
 const supportedOnAppleHealthIOS18Plus = _SupportedOn(
   platform: HealthPlatform.appleHealth,

@@ -47,7 +47,8 @@ final class BloodPressureDataType
   const BloodPressureDataType();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => HealthPlatform.values;
+  List<HealthPlatformRequirement> get healthPlatformRequirements =>
+      HealthPlatformRequirement.allPlatformsWithoutRequirements;
 
   @override
   String get id => 'blood_pressure';

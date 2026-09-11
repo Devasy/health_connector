@@ -21,7 +21,6 @@ part of '../health_data_type.dart';
 /// - [HeartRateVariabilityRMSSDRecord]
 ///
 @sinceV2_2_0
-@supportedOnHealthConnect
 @immutable
 final class HeartRateVariabilityRMSSDDataType
     extends HealthDataType<HeartRateVariabilityRMSSDRecord, TimeDuration>
@@ -42,8 +41,8 @@ final class HeartRateVariabilityRMSSDDataType
   String get id => 'heart_rate_variability_rmssd';
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.healthConnect,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    HealthConnectRequirement.none,
   ];
 
   @override

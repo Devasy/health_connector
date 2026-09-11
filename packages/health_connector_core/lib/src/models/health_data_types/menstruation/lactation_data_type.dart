@@ -20,7 +20,6 @@ part of '../health_data_type.dart';
 /// - [LactationRecord]
 ///
 @sinceV3_1_0
-@supportedOnAppleHealth
 @immutable
 class LactationDataType extends HealthDataType<LactationRecord, MeasurementUnit>
     implements
@@ -36,8 +35,8 @@ class LactationDataType extends HealthDataType<LactationRecord, MeasurementUnit>
   const LactationDataType() : super();
 
   @override
-  List<HealthPlatform> get supportedHealthPlatforms => [
-    HealthPlatform.appleHealth,
+  List<HealthPlatformRequirement> get healthPlatformRequirements => const [
+    AppleHealthRequirement.none,
   ];
 
   @override
