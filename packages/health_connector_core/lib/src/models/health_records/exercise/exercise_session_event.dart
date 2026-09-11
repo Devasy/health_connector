@@ -256,7 +256,7 @@ final class ExerciseSessionSegmentEvent extends ExerciseSessionIntervalEvent {
   /// **HealthKit (iOS):** Not yet persisted — always `null`. Unlike [weight],
   /// HealthKit could carry this in `HKWorkoutEvent.metadata` the way segment
   /// type and repetitions already are; that is a planned follow-up.
-  @sinceV3_10_0
+  @sinceV3_11_0
   final int? setIndex;
 
   /// Borg CR10 rate of perceived exertion for this segment.
@@ -270,7 +270,7 @@ final class ExerciseSessionSegmentEvent extends ExerciseSessionIntervalEvent {
   /// **HealthKit (iOS):** Not yet persisted — always `null`. Unlike [weight],
   /// HealthKit could carry this in `HKWorkoutEvent.metadata` the way segment
   /// type and repetitions already are; that is a planned follow-up.
-  @sinceV3_10_0
+  @sinceV3_11_0
   final double? rateOfPerceivedExertion;
 
   @override
